@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"             
+             x:Class="SpatialAnchors.Core.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="AccentColor">#1C2F3E</Color>
+            <Color x:Key="DarkAccentColor">#1C2F3E</Color>
+            <Color x:Key="LightAccentColor">#3E627F</Color>
+
+            <OnPlatform x:TypeArguments="x:Double" Android="20" iOS="18" x:Key="FontLarge" />
+            <OnPlatform x:TypeArguments="x:Double" Android="18" iOS="16" x:Key="FontMedium" />
+            <OnPlatform x:TypeArguments="x:Double" Android="14" iOS="12" x:Key="FontSmall" />
+                        
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource AccentColor}" />
+                <Setter Property="BarTextColor" Value="#FFFFFF" />
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

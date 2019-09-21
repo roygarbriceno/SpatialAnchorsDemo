@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<views:MvxContentPage x:TypeArguments="viewModels:AnchorsViewModel"
+                     xmlns="http://xamarin.com/schemas/2014/forms" 
+                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                     xmlns:views="clr-namespace:MvvmCross.Forms.Views;assembly=MvvmCross.Forms"
+                     xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
+                     xmlns:viewModels="clr-namespace:SpatialAnchors.Core.ViewModels;assembly=SpatialAnchors.Core"
+                     x:Class="SpatialAnchors.Core.Pages.AnchorsPage"
+                     mvx:La.ng="Title AppTitle, FallbackValue=AppTitle">
+
+    <views:MvxContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding PlaceAnchorsCommand}" mvx:La.ng="Text PlaceAnchor, FallbackValue=PlaceAnchor" />
+        <ToolbarItem Command="{Binding DeleteAnchorCommand}" mvx:La.ng="Text DeleteAnchor, FallbackValue=DeleteAnchor" />
+    </views:MvxContentPage.ToolbarItems>
+    
+</views:MvxContentPage>
