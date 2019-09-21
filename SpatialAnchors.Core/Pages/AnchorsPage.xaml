@@ -6,7 +6,7 @@
                      xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
                      xmlns:viewModels="clr-namespace:SpatialAnchors.Core.ViewModels;assembly=SpatialAnchors.Core"
                      x:Class="SpatialAnchors.Core.Pages.AnchorsPage"
-                     mvx:La.ng="Title AppTitle, FallbackValue=AppTitle">
+                      Title="AR">
 
     <views:MvxContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding PlaceAnchorsCommand}" mvx:La.ng="Text PlaceAnchor, FallbackValue=PlaceAnchor" />

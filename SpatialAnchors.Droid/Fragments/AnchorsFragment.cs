@@ -16,12 +16,12 @@ namespace SpatialAnchors.Droid.Fragments
 
     using Google.AR.Core;    
 
-    public class ArAnchorsFragment : ArFragment
+    public class AnchorsFragment : ArFragment
     {
         /// <summary>
         /// Empty constructor
         /// </summary>
-        public ArAnchorsFragment()
+        public AnchorsFragment()
         {
         }
 
@@ -32,7 +32,7 @@ namespace SpatialAnchors.Droid.Fragments
         {
             //PlaneDiscoveryController.Hide();
             //PlaneDiscoveryController.SetInstructionView(null);
-            ArSceneView.PlaneRenderer.Enabled = false;
+            // ArSceneView.PlaneRenderer.Enabled = false;
 
             var config = new Config(session);
             config.SetUpdateMode(Config.UpdateMode.LatestCameraImage);

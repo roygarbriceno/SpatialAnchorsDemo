@@ -15058,7 +15058,7 @@ namespace SpatialAnchors.Droid
 			public const int always = 2131558465;
 			
 			// aapt resource value: 0x7f0d00a2
-			public const int ar_fragment = 2131558562;
+			public const int anchors_fragment = 2131558562;
 			
 			// aapt resource value: 0x7f0d0067
 			public const int async = 2131558503;
@@ -15943,7 +15943,7 @@ namespace SpatialAnchors.Droid
 			public const int abc_tooltip = 2130968604;
 			
 			// aapt resource value: 0x7f04001d
-			public const int ArLayout = 2130968605;
+			public const int AnchorsLayout = 2130968605;
 			
 			// aapt resource value: 0x7f04001e
 			public const int BottomTabLayout = 2130968606;
