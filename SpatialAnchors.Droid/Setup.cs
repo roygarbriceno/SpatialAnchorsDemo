@@ -7,7 +7,7 @@
     using MvvmCross.Forms.Presenters;
     using Core.Interfaces;
     using Services;
-
+    
     /// <summary>
     /// Android setup class
     /// </summary>
@@ -37,7 +37,9 @@
         /// </summary>
         protected override void InitializeFirstChance()
         {
+            //Mvx.IoCProvider.RegisterSingleton<ISpatialAnchorsService>(new SpatialAnchorsService());
             Mvx.IoCProvider.RegisterSingleton<IPlatformService>(new PlatformService());
+            
             base.InitializeFirstChance();
         }
     }

@@ -3,6 +3,7 @@
     using MvvmCross.Commands;
     using MvvmCross.Logging;
     using MvvmCross.Navigation;
+    using SpatialAnchors.Core.Arguments;
 
 
     /// <summary>
@@ -10,15 +11,25 @@
     /// </summary>
     public class MainViewModel : BaseViewModel
     {
-        private IMvxCommand showArCommand;
+        private IMvxCommand createAnchorsCommand;
+        private IMvxCommand searchAnchorsCommand;
 
 
         /// <summary>
-        /// Shows the AR view
+        /// Shows the AR view for creating new anchors
         /// </summary>
-        public IMvxCommand ShowArCommand => showArCommand ?? (showArCommand = new MvxCommand(() =>
+        public IMvxCommand CreateAnchorsCommand => createAnchorsCommand ?? (createAnchorsCommand = new MvxCommand(() =>
         {
-            this.NavigationService.Navigate<AnchorsViewModel>();
+            this.NavigationService.Navigate<AnchorsViewModel, SpatialAnchorsParameter>(new SpatialAnchorsParameter { Mode = SpatialAnchorsMode.Adding });
+        }));
+
+
+        /// <summary>
+        /// Shows the AR view for searching anchors
+        /// </summary>
+        public IMvxCommand SearchAnchorsCommand => searchAnchorsCommand ?? (searchAnchorsCommand = new MvxCommand(() =>
+        {
+            this.NavigationService.Navigate<AnchorsViewModel, SpatialAnchorsParameter>(new SpatialAnchorsParameter { Mode = SpatialAnchorsMode.Searching  });
         }));
 
 

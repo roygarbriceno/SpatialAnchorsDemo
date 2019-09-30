@@ -71,10 +71,12 @@
     <Compile Include="Activities\SplashScreen.cs" />
     <Compile Include="Fragments\AnchorsFragment.cs" />
     <Compile Include="LinkerPleaseInclude.cs" />
+    <Compile Include="Models\AnchorModel.cs" />
     <Compile Include="Renderers\AnchorsPageRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PlatformService.cs" />
+    <Compile Include="Services\SpatialAnchorsService.cs" />
     <Compile Include="Setup.cs" />
   </ItemGroup>
   <ItemGroup>

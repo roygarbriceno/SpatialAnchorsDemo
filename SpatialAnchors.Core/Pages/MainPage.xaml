@@ -8,6 +8,9 @@
                            x:Class="SpatialAnchors.Core.Pages.MainPage">
 
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Button Text="Start AR" Command="{Binding ShowArCommand}" />
+        <Button Text="Create Anchors" Command="{Binding CreateAnchorsCommand}" />
+
+        <Button Text="Search Anchors" Command="{Binding SearchAnchorsCommand}" />
+   
     </StackLayout>
 </views:MvxContentPage>

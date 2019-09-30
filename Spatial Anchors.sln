@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnchors.Core", "SpatialAnchors.Core\SpatialAnchors.Core.csproj", "{DEC89E21-22CE-4CF5-B40C-0E5EF6F96C3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpatialAnchors.Core", "SpatialAnchors.Core\SpatialAnchors.Core.csproj", "{DEC89E21-22CE-4CF5-B40C-0E5EF6F96C3D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnchors.Droid", "SpatialAnchors.Droid\SpatialAnchors.Droid.csproj", "{F48677C6-A1CE-4527-9F63-FDFB71CA5370}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnchors.iOS", "SpatialAnchors.iOS\SpatialAnchors.iOS.csproj", "{5A50CB64-753B-459D-93B4-6EBD6A4F1ECF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnchors.Models", "SpatialAnchors.Models\SpatialAnchors.Models.csproj", "{84CD0E8B-E05C-43A3-9228-CEF65FACFCBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpatialAnchors.Models", "SpatialAnchors.Models\SpatialAnchors.Models.csproj", "{84CD0E8B-E05C-43A3-9228-CEF65FACFCBD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Languages", "Languages", "{18E59FDD-BF43-4B6A-A48B-5DDE566B664D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnchors.Service", "SpatialAnchors.Service\SpatialAnchors.Service.csproj", "{BB92A398-76B0-4253-BBE9-B50C90F16651}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,18 @@ Global
 		{84CD0E8B-E05C-43A3-9228-CEF65FACFCBD}.Release|iPhone.Build.0 = Release|Any CPU
 		{84CD0E8B-E05C-43A3-9228-CEF65FACFCBD}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{84CD0E8B-E05C-43A3-9228-CEF65FACFCBD}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Release|iPhone.Build.0 = Release|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{BB92A398-76B0-4253-BBE9-B50C90F16651}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,8 +9,8 @@
                       Title="AR">
 
     <views:MvxContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding PlaceAnchorsCommand}" mvx:La.ng="Text PlaceAnchor, FallbackValue=PlaceAnchor" />
-        <ToolbarItem Command="{Binding DeleteAnchorCommand}" mvx:La.ng="Text DeleteAnchor, FallbackValue=DeleteAnchor" />
+        <ToolbarItem Command="{Binding CreateAnchorsCommand}" mvx:La.ng="Text PlaceAnchor, FallbackValue=PlaceAnchor" />
+        <ToolbarItem Command="{Binding SearchAnchorsCommand}" mvx:La.ng="Text DeleteAnchor, FallbackValue=DeleteAnchor" />
     </views:MvxContentPage.ToolbarItems>
     
 </views:MvxContentPage>

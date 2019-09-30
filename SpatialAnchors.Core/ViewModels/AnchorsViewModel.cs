@@ -4,18 +4,25 @@
     using MvvmCross.Logging;
     using MvvmCross.Navigation;
     using MvvmCross.ViewModels;
+    using SpatialAnchors.Core.Arguments;
     using SpatialAnchors.Core.ViewModels;
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Threading.Tasks;
 
 
     /// <summary>
     /// AR Logic
     /// </summary>
-    public class AnchorsViewModel : BaseViewModel
+    public class AnchorsViewModel : BaseViewModel<SpatialAnchorsParameter>
     {
         private IMvxCommand captureChallengeCommand;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public SpatialAnchorsParameter Parameters { get; private set; }
 
 
         /// <summary>
@@ -34,6 +41,15 @@
             IMvxNavigationService navigationService) : base(logProvider, navigationService)
         {
 
+        }
+
+
+        /// <summary>
+        /// Receive the viewmodels parameters
+        /// </summary>        
+        public override void Prepare(SpatialAnchorsParameter parameter)
+        {
+            this.Parameters = parameter;
         }
 
     }
