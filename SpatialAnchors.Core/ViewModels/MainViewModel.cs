@@ -1,5 +1,7 @@
 ﻿namespace SpatialAnchors.Core.ViewModels
 {
+    using System;
+    using System.Threading.Tasks;
     using MvvmCross.Commands;
     using MvvmCross.Logging;
     using MvvmCross.Navigation;
@@ -27,9 +29,22 @@
         /// <summary>
         /// Shows the AR view for searching anchors
         /// </summary>
-        public IMvxCommand SearchAnchorsCommand => searchAnchorsCommand ?? (searchAnchorsCommand = new MvxCommand(() =>
+        public IMvxCommand SearchAnchorsCommand => searchAnchorsCommand ?? (searchAnchorsCommand = new MvxCommand(async () =>
         {
-            this.NavigationService.Navigate<AnchorsViewModel, SpatialAnchorsParameter>(new SpatialAnchorsParameter { Mode = SpatialAnchorsMode.Searching  });
+            try
+            {                
+                var anchors = await this.DataService.GetAnchorsAsync();
+                await this.NavigationService.Navigate<AnchorsViewModel, SpatialAnchorsParameter>(new SpatialAnchorsParameter
+                {
+                    Mode = SpatialAnchorsMode.Searching,
+                    Anchors = anchors.ToArray()
+                }); ;                
+            }
+            catch (Exception ex)
+            {
+
+            }
+       
         }));
 
 
@@ -39,5 +54,19 @@
         public MainViewModel(IMvxLogProvider logProvider, IMvxNavigationService navigationService) : base(logProvider, navigationService)
         {
         }
+
+
+        /// <summary>
+        /// Initializes the viewmodelo, loads the spatial anchors
+        /// </summary>
+        /// <returns></returns>
+        public override async Task Initialize()
+        {
+            await Task.Run(async () =>
+            {
+               
+            });
+        }
+
     }
 }

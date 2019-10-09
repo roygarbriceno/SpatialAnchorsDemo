@@ -80,6 +80,11 @@
         protected INotificationService NotificationService { get; }
 
 
+        /// <summary>
+        /// DATA service
+        /// </summary>
+        protected IDataService DataService { get; }
+
 
         /// <summary>
         /// Source for localized texts
@@ -130,6 +135,7 @@
             this.textProviderBuilder = Mvx.IoCProvider.GetSingleton<IMvxTextProviderBuilder>();
             this.MessengerService = Mvx.IoCProvider.GetSingleton<IMvxMessenger>();
             this.PlatformService = Mvx.IoCProvider.GetSingleton<IPlatformService>();
+            this.DataService = Mvx.IoCProvider.GetSingleton<IDataService>();
         }
 
 

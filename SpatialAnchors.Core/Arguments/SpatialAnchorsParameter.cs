@@ -7,5 +7,7 @@ namespace SpatialAnchors.Core.Arguments
     public class SpatialAnchorsParameter
     {
         public SpatialAnchorsMode Mode { get; set; }
+
+        public SpatialAnchors.Models.Anchor[] Anchors { get; set; }
     }
 }

@@ -17,10 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SpatialAnchors.Models\SpatialAnchors.Models.csproj" />
   </ItemGroup>
 </Project>

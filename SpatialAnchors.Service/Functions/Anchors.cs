@@ -45,7 +45,7 @@
                 var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
                 var item = JsonConvert.DeserializeObject<Anchor>(requestBody);
                  await this.dataAccess.AddUpdateAsync<AnchorEntity>(
-                    "Anchors", new AnchorEnvity
+                    "Anchors", new AnchorEntity
                     {
                         AnchorId = item.AnchorId,
                         PartitionKey = "Anchors",

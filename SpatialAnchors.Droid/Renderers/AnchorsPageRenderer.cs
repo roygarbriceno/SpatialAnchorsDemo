@@ -58,6 +58,7 @@ namespace SpatialAnchors.Droid.Renderers
 
         protected string spatialAnchorsAccountId = "fe723cf9-aaed-455f-bd36-322a14657249";
         protected string spatialAnchorsAccountKey = "o5dc40N0mFQ1YDFqhddcTf3WijFf9X4vylVmo+Nu5E0=";
+        private bool scanning = false;
         private bool savingAnchor = false;
 
         /// <summary>
@@ -133,18 +134,26 @@ namespace SpatialAnchors.Droid.Renderers
             CloudServices.Initialize(Android.App.Application.Context);
 
             this.spatialAnchorsSession = new CloudSpatialAnchorSession();
-             this.spatialAnchorsSession.Configuration.AccountKey = this.spatialAnchorsAccountKey;
-            this.spatialAnchorsSession.Configuration.AccountId = this.spatialAnchorsAccountId;
-
+            this.spatialAnchorsSession.Configuration.AccountKey = this.spatialAnchorsAccountKey;
+            this.spatialAnchorsSession.Configuration.AccountId = this.spatialAnchorsAccountId;           
             this.spatialAnchorsSession.Session = this.sceneView.Session;
             this.spatialAnchorsSession.LogDebug += this.LogDebug;
             this.spatialAnchorsSession.Error += this.Error;
             this.spatialAnchorsSession.AnchorLocated += this.OnAnchorLocated;
             this.spatialAnchorsSession.LocateAnchorsCompleted += this.OnLocateAnchorsCompleted;
             this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;
+            this.spatialAnchorsSession.TokenRequired += SpatialAnchorsSession_TokenRequired;
 
+
+          
             this.spatialAnchorsSession.Start();
             this.sessionStarted = true;
+        }
+
+        private async void SpatialAnchorsSession_TokenRequired(object sender, TokenRequiredEventArgs e)
+        {
+            var token = await this.spatialAnchorsSession.GetAccessTokenWithAccountKeyAsync(this.spatialAnchorsAccountKey).GetAsync();
+            //e.Args.AuthenticationToken = token.;
         }
 
 
@@ -154,24 +163,27 @@ namespace SpatialAnchors.Droid.Renderers
         private void SessionUpdated(object sender, SessionUpdatedEventArgs e)
         {
             //var createScanProgress = System.Math.Min(e.Args.Status.RecommendedForCreateProgress, 1);            
-            if (this.viewModel.Parameters.Mode == Core.SpatialAnchorsMode.Adding)
+            if (this.viewModel.Parameters.Mode == Core.SpatialAnchorsMode.Adding && this.scanning)
             {
                 float progress = e.Args.Status.RecommendedForCreateProgress;
                 var enoughDataForSaving = progress >= 1.0;
                 lock (this.progressLock)
                 {
 
-                    if (this.savingAnchor)
+                    if (this.scanning && !enoughDataForSaving)
                     {
                         ShowMessage($"Scan progress is {System.Math.Min(1.0f, progress):0%}");
+                        return;
                     }
-
                     if (enoughDataForSaving)
                     {
+                        if (this.savingAnchor) return;
                         if (this.anchorVisuals.TryGetValue(string.Empty, out AnchorModel model))
                         {
                             try
                             {
+                                this.savingAnchor = true;
+                                this.scanning = false;
                                 var cloudAnchor = new CloudSpatialAnchor
                                 {
                                     LocalAnchor = model.AnchorNode.Anchor
@@ -181,16 +193,25 @@ namespace SpatialAnchors.Droid.Renderers
                                 var calendar = Calendar.Instance;
                                 calendar.Time = now;
                                 calendar.Add(CalendarField.Date, 7);
-                                var oneWeekFromNow = calendar.Time;
+                                var oneWeekFromNow = calendar.Time;                                
                                 cloudAnchor.Expiration = oneWeekFromNow;
                                 Task.Run(async () =>
                                 {
-                                    var result = await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor).GetAsync();
-                                    var anchorId = cloudAnchor.Identifier;
-                                    this.anchorVisuals[anchorId] = model;
-                                    this.anchorVisuals.TryRemove(string.Empty, out _);
-
-                                    ShowMessage("Anchor saved");
+                                    try
+                                    {
+                                        ShowMessage("Saving anchors");
+                                        var result = await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor).GetAsync();
+                                        var anchorId = cloudAnchor.Identifier;
+                                        this.anchorVisuals[anchorId] = model;
+                                        this.anchorVisuals.TryRemove(string.Empty, out _);
+                                        await  this.viewModel.SaveAnchorAsync(new SpatialAnchors.Models.Anchor { AnchorId = cloudAnchor.Identifier });
+                                        ShowMessage("Anchor saved");
+                                        this.savingAnchor = false;
+                                    }
+                                    catch(System.Exception ex)
+                                    {
+                                        var msg = ex.Message;
+                                    }
                                 });
                             }
                             catch
@@ -252,7 +273,7 @@ namespace SpatialAnchors.Droid.Renderers
             andy.Select();*/
 
             if (modelRenderable == null) return;
-            if (this.viewModel.Parameters.Mode == Core.SpatialAnchorsMode.Adding)
+            if (this.viewModel.Parameters.Mode == Core.SpatialAnchorsMode.Adding && !this.scanning && !this.savingAnchor)
             {
                 var anchorModel = new AnchorModel
                 {
@@ -264,7 +285,7 @@ namespace SpatialAnchors.Droid.Renderers
                 // The key will be set when the anchor is saved
                 this.anchorVisuals[string.Empty] = anchorModel;
 
-                this.savingAnchor = true;
+                this.scanning = true;
                 /*AnchorVisual visual = new AnchorVisual(hitResult.CreateAnchor());
                 visual.SetColor(readyColorMaterial);
                 visual.AddToScene(this.arFragment);
@@ -370,25 +391,20 @@ namespace SpatialAnchors.Droid.Renderers
         /// <summary>
         /// Shows a message to the user
         /// </summary>
-       private void ShowMessage(string message)
+        private void ShowMessage(string message)
         {
-            //Invo(() =>
+            try
             {
-                try
-                {
-                    var activity = this.Context as Activity;
-                    var view = activity.FindViewById(Android.Resource.Id.Content);
-                    Snackbar snackBar = Snackbar.Make(view, message, Snackbar.LengthIndefinite);
-                    //snackBar.SetActionTextColor(Android.Graphics.Color.White);
-                    //snackBar.SetAction("Ok", action => { });
-                    snackBar.SetDuration(6000);
-                    snackBar.Show();
-                }
-                catch
-                {
-                    // Nothing to do
-                }
-            }///);
+                var activity = this.Context as Activity;
+                var view = activity.FindViewById(Android.Resource.Id.Content);
+                var snackBar = Snackbar.Make(view, message, Snackbar.LengthIndefinite);
+                snackBar.SetDuration(5000);
+                snackBar.Show();
+            }
+            catch
+            {
+                // Nothing to do
+            }
         }
 
 
@@ -410,13 +426,12 @@ namespace SpatialAnchors.Droid.Renderers
         {
             SessionErrorEvent eventArgs = e?.Args;
             if (eventArgs == null)
-            {
-                //Debug.WriteLine("Azure Spatial Anchors reported an unspecified error.");
+            {                
                 return;
             }
-            /*string message = $"{eventArgs.ErrorCode}: {eventArgs.ErrorMessage}";
-            Debug.WriteLine(message);
-            this.OnSessionError?.Invoke(sender, eventArgs);*/
+            string message = $"{eventArgs.ErrorCode}: {eventArgs.ErrorMessage}";
+
+            ShowMessage("Error " + message);
         }
 
 
@@ -431,22 +446,29 @@ namespace SpatialAnchors.Droid.Renderers
             {
                 
             }*/
-            var nearbyLocateCriteria = new AnchorLocateCriteria();
+            //var nearbyLocateCriteria = new AnchorLocateCriteria();
 
-            var nearAnchorCriteria = new NearAnchorCriteria
-            {
-                DistanceInMeters = 10,
-                MaxResultCount = 10
-                //SourceAnchor = this.anchorVisuals[this.anchorID].CloudAnchor
-            };
-            nearbyLocateCriteria.NearAnchor = nearAnchorCriteria;
+            //var nearAnchorCriteria = new NearAnchorCriteria
+            //{
+            //    DistanceInMeters = 10,
+            //    MaxResultCount = 10,                
+            //    //SourceAnchor = this.anchorVisuals[this.anchorID].CloudAnchor
+            //};
+            //nearbyLocateCriteria.NearAnchor = nearAnchorCriteria;            
             // Cannot run more than one watcher concurrently
 
             //this.StopWatcher();
-            //this.anchorsToLocate = this.saveCount;
 
             StopLocatingAnchors();
-            this.spatialAnchorsSession.CreateWatcher(nearbyLocateCriteria);
+
+
+            var criteria = new AnchorLocateCriteria();
+            criteria.SetIdentifiers(this.viewModel.Parameters.Anchors.Select(x=>x.AnchorId).ToArray());
+
+            this.spatialAnchorsSession.CreateWatcher(criteria);
+
+
+            //this.cloudAnchorManager.StartLocating(criteria);
 
         }
 
@@ -463,38 +485,19 @@ namespace SpatialAnchors.Droid.Renderers
         
         private void OnAnchorLocated(object sender, AnchorLocatedEventArgs e)
         {
-            var status = e.Args.Status;
-
-            if (status == LocateAnchorStatus.AlreadyTracked
-                    || status == LocateAnchorStatus.Located)
+            var status = e.Args.Status;           
+            if (status == LocateAnchorStatus.AlreadyTracked)
             {
-                //this.anchorsToLocate--;
-            }
-
-            if (status == LocateAnchorStatus.Located)
-            {
-                ShowMessage("Anchor found");
+                // Nothing to do since we've already rendered any anchors we've located.
             }
             else if (status == LocateAnchorStatus.Located)
             {
-                AddLocatedAnchor(e.Args.Anchor);
+                ShowMessage("Anchor found");
+                this.Context.GetActivity().RunOnUiThread (() =>
+                {
+                    AddLocatedAnchor(e.Args.Anchor);
+                });
             }
-
-            /*this.RunOnUiThread(() =>
-            {
-                if (status == LocateAnchorStatus.AlreadyTracked)
-                {
-                    // Nothing to do since we've already rendered any anchors we've located.
-                }
-                else if (status == LocateAnchorStatus.Located)
-                {
-                    this.RenderLocatedAnchor(eventArgs.Anchor);
-                }
-                else if (status == LocateAnchorStatus.NotLocatedAnchorDoesNotExist)
-                {
-                    this.statusText.Text = "Anchor does not exist";
-                }
-            });*/
         }
 
 
@@ -553,10 +556,10 @@ namespace SpatialAnchors.Droid.Renderers
             var anchorModel = new AnchorModel
             {
                 AnchorNode = new AnchorNode(anchor.LocalAnchor),
+                CloudAnchor = anchor
             };
-            anchorModel.AddToScene(modelRenderable, arFragment);
-            var cloudAnchorIdentifier = anchorModel.CloudAnchor.Identifier;
-            this.anchorVisuals[cloudAnchorIdentifier] = anchorModel;
+            anchorModel.AddToScene(modelRenderable, arFragment);            
+            this.anchorVisuals[anchor.Identifier] = anchorModel;
 
 
             //AnchorVisual foundVisual = new AnchorVisual(anchor.LocalAnchor)

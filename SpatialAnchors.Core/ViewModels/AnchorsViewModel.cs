@@ -4,11 +4,8 @@
     using MvvmCross.Logging;
     using MvvmCross.Navigation;
     using MvvmCross.ViewModels;
-    using SpatialAnchors.Core.Arguments;
-    using SpatialAnchors.Core.ViewModels;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+    using SpatialAnchors.Core.Arguments;    
+    using System;    
     using System.Threading.Tasks;
 
 
@@ -20,7 +17,7 @@
         private IMvxCommand captureChallengeCommand;
 
         /// <summary>
-        /// 
+        /// ViewModel parameters
         /// </summary>
         public SpatialAnchorsParameter Parameters { get; private set; }
 
@@ -52,5 +49,29 @@
             this.Parameters = parameter;
         }
 
+
+     
+
+        /// <summary>
+        /// Saves an anchor
+        /// </summary>        
+        public async Task<bool> SaveAnchorAsync(SpatialAnchors.Models.Anchor anchor)
+        {
+            try
+            {
+                if (await this.DataService.SaveAnchorAsync(anchor))
+                {
+                    //this.Anchors.Add(anchor);
+                    return true;
+                }                
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
+        }
+
+        
     }
 }
