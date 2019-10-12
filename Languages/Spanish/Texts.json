@@ -1,9 +1,13 @@
 {
   "AppTitle": "Demo de Spatial Anchors",
-  "AddOAnchors": "Agregar objetos",
+  "AddAnchors": "Agregar objetos",
   "LocateAnchors": "Buscar objetos",
-  "StartLocatingAnchors": "",
-  "StartAddingAnchors": "",
-  "SavingAnchor": "",
-  "ErrorSavingAnchor": ""
+  "StartAddingAnchors": "Utiliza la cámara para ubicar una superfie y toca la pantalla para colocar el modelo",
+  "StartSavingAnchors": "Mueve la camara alrededor del modelo hasta obtener tener suficiente información de la zona y poder guardarlo",
+  "StartLocatingAnchors": "Utiliza la camara para escanear y buscar modelos a tu alrededor, a medida que los encuentres irán apareciendo automáticamente",
+  "FinishedLocatingAnchors": "No se encontraron modelos en tu zona",
+  "SavingAnchor": "Guardando modelo, por favor espera",
+  "ErrorSavingAnchor": "Ocurrió un error guardando el modelo",
+  "Error": "Error",
+  "Info": "Información"
 }

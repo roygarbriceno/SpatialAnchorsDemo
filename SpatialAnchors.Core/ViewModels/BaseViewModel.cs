@@ -124,6 +124,7 @@
             this.isBusy = false;
             this.textProviderBuilder = Mvx.IoCProvider.GetSingleton<IMvxTextProviderBuilder>();
             this.MessengerService = Mvx.IoCProvider.GetSingleton<IMvxMessenger>();
+            this.NotificationService = Mvx.IoCProvider.GetSingleton<INotificationService>();
             this.DataService = Mvx.IoCProvider.GetSingleton<IDataService>();
         }
 

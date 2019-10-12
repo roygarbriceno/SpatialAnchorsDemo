@@ -45,13 +45,13 @@
                 }
                 catch (Exception ex)
                 {
-                    ShowMessage("ErrorSavingAnchor", ex.Message);
+                    ShowMessage("Error", "ErrorSavingAnchor", ex.Message);
                 }
             };
 
             this.spatialAnchorsService.ShowMessage += (sender, args) =>
             {
-                ShowMessage(args);
+                ShowMessage("Info", args);
             };
         }
 
@@ -76,11 +76,11 @@
             if (this.parameters.Mode == SpatialAnchorsMode.SearchAnchors)
             {
                 this.spatialAnchorsService.StartLocatingAnchors(this.parameters.Anchors.Select(x=>x.AnchorId).ToArray());
-                ShowMessage("StartLocatingAnchors");
+                ShowMessage("Info", "StartLocatingAnchors");
             }
             else
             {
-                ShowMessage("StartAddingAnchors");
+                ShowMessage("Info", "StartAddingAnchors");
             }
         }
 
@@ -107,9 +107,13 @@
         /// <summary>
         /// Shows a message to the user
         /// </summary>        
-        public void ShowMessage(string message, string details = "")
+        public void ShowMessage(string title, string text, string details = "")
         {
-
+            InvokeOnMainThread(() =>
+            {
+                var message = $"{GetText(text)} {details}";
+                this.NotificationService.NotifyAsync(GetText(title), message);
+            });
         }
     }
 }

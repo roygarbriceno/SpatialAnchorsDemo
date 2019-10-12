@@ -5,12 +5,13 @@
                            xmlns:views="clr-namespace:MvvmCross.Forms.Views;assembly=MvvmCross.Forms"
                            xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
                            xmlns:viewModels="clr-namespace:SpatialAnchors.Core.ViewModels;assembly=SpatialAnchors.Core"
-                           x:Class="SpatialAnchors.Core.Pages.MainPage">
+                           x:Class="SpatialAnchors.Core.Pages.MainPage"
+                           mvx:La.ng="Title AppTitle, FallbackValue=AppTitle">
 
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Button Text="Create Anchors" Command="{Binding CreateAnchorsCommand}" IsEnabled="{Binding IsEnabled}"/>
+        <Button mvx:La.ng="Text AddAnchors, FallbackValue=AppTitle" Command="{Binding CreateAnchorsCommand}" IsEnabled="{Binding IsEnabled}"/>
 
-        <Button Text="Search Anchors" Command="{Binding SearchAnchorsCommand}" IsEnabled="{Binding IsEnabled}" />
+        <Button mvx:La.ng="Text LocateAnchors, FallbackValue=AppTitle" Command="{Binding SearchAnchorsCommand}" IsEnabled="{Binding IsEnabled}" />
    
     </StackLayout>
 </views:MvxContentPage>

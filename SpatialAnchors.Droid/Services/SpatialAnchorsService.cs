@@ -239,6 +239,7 @@ namespace SpatialAnchors.Droid.Services
             {
                 var model = CreateModel(new AnchorNode(e.HitResult.CreateAnchor()), null);
                 this.anchorVisuals[string.Empty] = model;
+                ShowMessage(this, "StartSavingAnchors");
                 this.Status = SpatialAnchorStatus.Scanning; 
             }
         }
