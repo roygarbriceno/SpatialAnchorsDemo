@@ -42,6 +42,7 @@
                 try
                 {
                     await this.DataService.SaveAnchorAsync(args);
+                    ShowMessage("Info", "AnchorSaved");
                 }
                 catch (Exception ex)
                 {

@@ -10,7 +10,6 @@
     using Interfaces;
     using MvvmCross.Plugin.JsonLocalization;
     using Services;
-    using MvvmCross.Plugin.Messenger;
    
 
     /// <summary>
@@ -20,19 +19,6 @@
     {
         private bool isBusy;
         private readonly IMvxTextProviderBuilder textProviderBuilder;
-
-
-        /// <summary>
-        /// Page title 
-        /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
-        /// Current messenger service
-        /// </summary>
-        protected IMvxMessenger MessengerService { get; }
-
-
 
         /// <summary>
         /// Get's if the viewModel is busy doing something
@@ -122,8 +108,7 @@
         protected BaseViewModel(IMvxLogProvider logProvider, IMvxNavigationService navigationService) : base(logProvider, navigationService)
         {
             this.isBusy = false;
-            this.textProviderBuilder = Mvx.IoCProvider.GetSingleton<IMvxTextProviderBuilder>();
-            this.MessengerService = Mvx.IoCProvider.GetSingleton<IMvxMessenger>();
+            this.textProviderBuilder = Mvx.IoCProvider.GetSingleton<IMvxTextProviderBuilder>();            
             this.NotificationService = Mvx.IoCProvider.GetSingleton<INotificationService>();
             this.DataService = Mvx.IoCProvider.GetSingleton<IDataService>();
         }

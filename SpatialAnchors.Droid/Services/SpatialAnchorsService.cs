@@ -50,10 +50,15 @@ namespace SpatialAnchors.Droid.Services
 
         /// </inheritdoc>
         public void StartSession(object context, object arScene)
-        {
+        {            
             this.context = context as Context; 
             this.arFragment = arScene as ArFragment;
-            CloudServices.Initialize(this.context);
+
+            if (this.spatialAnchorsSession == null)
+            {
+                CloudServices.Initialize(this.context);
+            }
+
             this.spatialAnchorsSession = new CloudSpatialAnchorSession();
             this.spatialAnchorsSession.Configuration.AccountKey = Constants.SpatialAnchorsAccountKey;
             this.spatialAnchorsSession.Configuration.AccountId = Constants.SpatialAnchorsAccountId;
@@ -62,13 +67,14 @@ namespace SpatialAnchors.Droid.Services
             this.spatialAnchorsSession.LocateAnchorsCompleted += this.OnLocateAnchorsCompleted;
             this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;
             this.spatialAnchorsSession.TokenRequired += SpatialAnchorsSession_TokenRequired;
-
             this.spatialAnchorsSession.Error += (sender, e) =>
             {
                 SessionErrorEvent eventArgs = e?.Args;
-                if (eventArgs == null) return;                
+                if (eventArgs == null) return;
                 var message = $"{eventArgs.ErrorCode}: {eventArgs.ErrorMessage}";
+                ShowMessage(this, message);
             };
+            
 
             this.spatialAnchorsSession.Start();           
             this.Status  = SpatialAnchorStatus.Iddle;
@@ -121,8 +127,7 @@ namespace SpatialAnchors.Droid.Services
                                 Task.Run(async () =>
                                 {
                                     try
-                                    {
-                                        ShowMessage(this, "SavingAnchor");
+                                    {                                      
                                         var result = await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor).GetAsync();
                                         var anchorId = cloudAnchor.Identifier;
                                         this.anchorVisuals[anchorId] = model;
@@ -215,8 +220,7 @@ namespace SpatialAnchors.Droid.Services
                 // Nothing to do since we've already rendered any anchors we've located.
             }
             else if (status == LocateAnchorStatus.Located)
-            {
-                //ShowMessage("Anchor found");
+            {                
                 var activity = this.context as Activity;
                 activity?.RunOnUiThread(() =>
                 {
@@ -238,8 +242,7 @@ namespace SpatialAnchors.Droid.Services
                 this.Status == SpatialAnchorStatus.Iddle)
             {
                 var model = CreateModel(new AnchorNode(e.HitResult.CreateAnchor()), null);
-                this.anchorVisuals[string.Empty] = model;
-                ShowMessage(this, "StartSavingAnchors");
+                this.anchorVisuals[string.Empty] = model;                
                 this.Status = SpatialAnchorStatus.Scanning; 
             }
         }

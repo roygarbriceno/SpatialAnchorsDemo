@@ -80,7 +80,7 @@
     <Compile Include="Setup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="..\Languages\Spanish\Texts.json">
+    <AndroidAsset Include="..\Languages\Texts.json">
       <Link>Assets\Languages\Texts.json</Link>
     </AndroidAsset>
     <None Include="Properties\AndroidManifest.xml" />
@@ -117,9 +117,6 @@
       <Version>6.4.1</Version>
     </PackageReference>
     <PackageReference Include="MvvmCross.Plugin.JsonLocalization">
-      <Version>6.4.1</Version>
-    </PackageReference>
-    <PackageReference Include="MvvmCross.Plugin.Messenger">
       <Version>6.4.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.SceneForm.Animation">
