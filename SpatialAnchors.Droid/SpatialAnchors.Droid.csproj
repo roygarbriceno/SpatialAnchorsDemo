@@ -75,11 +75,13 @@
     <Compile Include="Renderers\AnchorsPageRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\SpatialAnchorsService.cs" />
     <Compile Include="Setup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="..\Languages\Spanish\Texts.json">
+      <Link>Assets\Languages\Texts.json</Link>
+    </AndroidAsset>
     <None Include="Properties\AndroidManifest.xml" />
     <AndroidResource Include="Resources\raw\andy.sfb" />
   </ItemGroup>
@@ -196,9 +198,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\splash.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Assets\Languages\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <AndroidResource Include="Resources\layout\AnchorsLayout.xml">
       <SubType>Designer</SubType>

@@ -1,7 +1,5 @@
 ﻿namespace SpatialAnchors.Droid.Activities
 {
-    using System.Globalization;
-    using System.Threading;
     using MvvmCross.Forms.Platforms.Android.Views;
     using Core.ViewModels;
     using Android.App;
@@ -42,18 +40,6 @@
             base.InitializeForms(bundle);
             Xamarin.Forms.Forms.Init(this, bundle);
 
-        }
-
-
-        /// <summary>
-        /// OnResume
-        /// Forces the culture to es-UY
-        /// </summary>
-        protected override void OnResume()
-        {
-            var selectedCulture = new CultureInfo("es-UY");
-            Thread.CurrentThread.CurrentCulture = selectedCulture;
-            base.OnResume();
         }
     }
 }

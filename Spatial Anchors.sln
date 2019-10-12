@@ -13,7 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpatialAnchors.Models", "Sp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Languages", "Languages", "{18E59FDD-BF43-4B6A-A48B-5DDE566B664D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnchors.Service", "SpatialAnchors.Service\SpatialAnchors.Service.csproj", "{BB92A398-76B0-4253-BBE9-B50C90F16651}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpatialAnchors.Service", "SpatialAnchors.Service\SpatialAnchors.Service.csproj", "{BB92A398-76B0-4253-BBE9-B50C90F16651}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Spanish", "Spanish", "{56941CD6-5E9E-4E82-9A5E-4F109B656B13}"
+	ProjectSection(SolutionItems) = preProject
+		Languages\Spanish\Texts.json = Languages\Spanish\Texts.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +97,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{56941CD6-5E9E-4E82-9A5E-4F109B656B13} = {18E59FDD-BF43-4B6A-A48B-5DDE566B664D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE5EAEB0-469C-4D3B-BEB8-A28B53B8DC64}

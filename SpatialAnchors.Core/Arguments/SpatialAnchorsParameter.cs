@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SpatialAnchors.Core.Arguments
+﻿namespace SpatialAnchors.Core.Arguments
 {
+    /// <summary>
+    /// Parameter for the AR ViwModel
+    /// </summary>
     public class SpatialAnchorsParameter
     {
         public SpatialAnchorsMode Mode { get; set; }
 
-        public SpatialAnchors.Models.Anchor[] Anchors { get; set; }
+        public Models.Anchor[] Anchors { get; set; }
     }
 }

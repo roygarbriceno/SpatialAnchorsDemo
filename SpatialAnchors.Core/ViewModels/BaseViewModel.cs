@@ -11,10 +11,7 @@
     using MvvmCross.Plugin.JsonLocalization;
     using Services;
     using MvvmCross.Plugin.Messenger;
-    using System.Text;
-    using System.Linq;
-    using Xamarin.Essentials;
-
+   
 
     /// <summary>
     /// Base class for all our ViewModels
@@ -65,13 +62,6 @@
                 RaisePropertyChanged(() => IsEnabled);
             }
         }
-
-
-       
-        /// <summary>
-        /// Platform service
-        /// </summary>
-        protected IPlatformService PlatformService { get; }
 
 
         /// <summary>
@@ -134,7 +124,6 @@
             this.isBusy = false;
             this.textProviderBuilder = Mvx.IoCProvider.GetSingleton<IMvxTextProviderBuilder>();
             this.MessengerService = Mvx.IoCProvider.GetSingleton<IMvxMessenger>();
-            this.PlatformService = Mvx.IoCProvider.GetSingleton<IPlatformService>();
             this.DataService = Mvx.IoCProvider.GetSingleton<IDataService>();
         }
 

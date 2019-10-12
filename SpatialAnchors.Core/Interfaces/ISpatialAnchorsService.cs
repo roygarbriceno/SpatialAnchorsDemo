@@ -1,52 +1,65 @@
-﻿//namespace SpatialAnchors.Core.Interfaces
-//{
-//    using System.Threading.Tasks;
-
-//    /// <summary>
-//    /// Common interface for the spatial anchor service
-//    /// </summary>
-//    public interface ISpatialAnchorsService
-//    {
-//        /// <summary>
-//        /// Initializes the Spatial Anchors AR session
-//        /// </summary>
-//        /// <param name="session"></param>
-//        void Initialize(object session);
+﻿namespace SpatialAnchors.Core.Interfaces
+{
+    using System;
+    using SpatialAnchors.Models;
 
 
-//        /// <summary>
-//        /// Starts the AR session
-//        /// </summary>
-//        void StartSession();
+    /// <summary>
+    /// Common interface for the AR service with spatial anchors support
+    /// </summary>
+    public interface ISpatialAnchorsService
+    {
+        /// <summary>
+        /// Current mode of the ar sersion
+        /// </summary>
+        SpatialAnchorsMode Mode { get; }
 
 
-//        /// <summary>
-//        /// Stops the AR sessions
-//        /// </summary>
-//        void StopSession();
+        /// <summary>
+        /// Current status of spatial anchor session
+        /// </summary>
+        SpatialAnchorStatus Status { get; }
 
 
-//        /// <summary>
-//        /// Start searching for anchors
-//        /// </summary>
-//        void StartSearching();
+        /// <summary>
+        /// Called to save an anchor
+        /// </summary>
+        EventHandler<Anchor> SaveAnchor { get; set; }
 
 
-//        /// <summary>
-//        /// Stop searching for anchors
-//        /// </summary>
-//        void StopSearching();
+        /// <summary>
+        /// Called to show a message to the user
+        /// </summary>
+        EventHandler<string> ShowMessage { get; set; }
 
 
-//        /// <summary>
-//        /// Updates a frame
-//        /// </summary>        
-//        void Update(object frame);
+        /// <summary>
+        /// Initializes the Spatial Anchors AR session
+        /// </summary>        
+        void StartSession(object context, object scene);
 
 
-//        /// <summary>
-//        /// Creates a new spatial anchors
-//        /// </summary>        
-//        Task<object> CreateAnchorAsync(object platformAnchor);
-//    }
-//}
+        /// <summary>
+        /// Starts locating a collection of anchors
+        /// </summary>        
+        void StartLocatingAnchors(string[] anchors);
+
+      
+        /// <summary>
+        /// Stops the AR sessions
+        /// </summary>
+        void StopSession();
+
+        /// <summary>
+        /// Loasd the 3D models to use
+        /// </summary>
+        void LoadModels();
+
+       
+        /// <summary>
+        /// Updates a frame
+        /// </summary>        
+        void ProcessFrame(object frame);
+
+    }
+}

@@ -2,7 +2,6 @@
 {
     using MvvmCross.IoC;
     using MvvmCross.ViewModels;
-    using System.Globalization;
     using ViewModels;
     using Services;
     using MvvmCross;

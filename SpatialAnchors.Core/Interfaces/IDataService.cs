@@ -13,14 +13,14 @@
         /// <summary>
         /// Saves an anchor
         /// </summary>        
-        Task<bool> SaveAnchorAsync(SpatialAnchors.Models.Anchor anchor);
+        Task<bool> SaveAnchorAsync(Models.Anchor anchor);
 
 
         /// <summary>
         /// Gets tha available anchors
         /// </summary>
         /// <returns></returns>
-        Task<List<SpatialAnchors.Models.Anchor>> GetAnchorsAsync();
+        Task<List<Models.Anchor>> GetAnchorsAsync();
         
 
     }

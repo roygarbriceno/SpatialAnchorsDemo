@@ -1,7 +1,6 @@
 ﻿namespace SpatialAnchors.Core.ViewModels
 {
     using System;
-    using System.Threading.Tasks;
     using MvvmCross.Commands;
     using MvvmCross.Logging;
     using MvvmCross.Navigation;
@@ -15,14 +14,14 @@
     {
         private IMvxCommand createAnchorsCommand;
         private IMvxCommand searchAnchorsCommand;
-
+    
 
         /// <summary>
         /// Shows the AR view for creating new anchors
         /// </summary>
         public IMvxCommand CreateAnchorsCommand => createAnchorsCommand ?? (createAnchorsCommand = new MvxCommand(() =>
         {
-            this.NavigationService.Navigate<AnchorsViewModel, SpatialAnchorsParameter>(new SpatialAnchorsParameter { Mode = SpatialAnchorsMode.Adding });
+            this.NavigationService.Navigate<AnchorsViewModel, SpatialAnchorsParameter>(new SpatialAnchorsParameter { Mode = SpatialAnchorsMode.AddAnchors });
         }));
 
 
@@ -31,20 +30,25 @@
         /// </summary>
         public IMvxCommand SearchAnchorsCommand => searchAnchorsCommand ?? (searchAnchorsCommand = new MvxCommand(async () =>
         {
+
             try
-            {                
+            {
+                this.IsBusy = true;
                 var anchors = await this.DataService.GetAnchorsAsync();
                 await this.NavigationService.Navigate<AnchorsViewModel, SpatialAnchorsParameter>(new SpatialAnchorsParameter
                 {
-                    Mode = SpatialAnchorsMode.Searching,
+                    Mode = SpatialAnchorsMode.SearchAnchors,
                     Anchors = anchors.ToArray()
-                }); ;                
+                });
             }
             catch (Exception ex)
             {
-
+                // Do something
             }
-       
+            finally
+            {
+                this.IsBusy = false;
+            }          
         }));
 
 
@@ -54,19 +58,5 @@
         public MainViewModel(IMvxLogProvider logProvider, IMvxNavigationService navigationService) : base(logProvider, navigationService)
         {
         }
-
-
-        /// <summary>
-        /// Initializes the viewmodelo, loads the spatial anchors
-        /// </summary>
-        /// <returns></returns>
-        public override async Task Initialize()
-        {
-            await Task.Run(async () =>
-            {
-               
-            });
-        }
-
     }
 }

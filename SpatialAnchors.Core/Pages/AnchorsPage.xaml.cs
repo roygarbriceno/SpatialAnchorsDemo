@@ -1,10 +1,9 @@
 ﻿namespace SpatialAnchors.Core.Pages
-{
-    using MvvmCross.Forms.Presenters.Attributes;
+{    
     using Xamarin.Forms.Xaml;
 
     /// <summary>
-    /// Spatial UI
+    /// AR UI
     /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]    
     public partial class AnchorsPage

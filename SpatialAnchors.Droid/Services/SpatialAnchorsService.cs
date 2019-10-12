@@ -1,182 +1,277 @@
-﻿//using System;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.Azure.SpatialAnchors;
-//using SpatialAnchors.Core.Services;
-//using Java.Util.Concurrent;
-//using SpatialAnchors.Core.Interfaces;
-//using Google.AR.Core;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Azure.SpatialAnchors;
+using Java.Util.Concurrent;
+using SpatialAnchors.Core.Interfaces;
+using Google.AR.Core;
+using Android.App;
+using Google.AR.Sceneform;
+using SpatialAnchors.Core;
+using Android.Content;
+using SpatialAnchors.Droid.Models;
+using System.Collections.Concurrent;
+using Google.AR.Sceneform.Rendering;
+using Java.Util;
+using Google.AR.Sceneform.UX;
 
-//namespace SpatialAnchors.Droid.Services
-//{
-//    /// <summary>
-//    /// Spatial Anchors android implementation
-//    /// </summary>
-//    public class SpatialAnchorsService : BaseSpatiaAnchorsService, ISpatialAnchorsService
-//    {
-//        private bool sessionStarted = false;
-//        private CloudSpatialAnchorSession spatialAnchorsSession;
-//        private TrackingState lastTrackingState = TrackingState.Stopped;
-//        private TrackingFailureReason lastTrackingFailureReason = TrackingFailureReason.None;
+namespace SpatialAnchors.Droid.Services
+{
+    /// <summary>
+    /// Spatial Anchors android implementation
+    /// </summary>
+    public class SpatialAnchorsService : ISpatialAnchorsService
+    {
+        private ArFragment arFragment;
+        private ModelRenderable modelRenderable;                
+        private Context context;
+        private CloudSpatialAnchorSession spatialAnchorsSession;
+        private TrackingState lastTrackingState = TrackingState.Stopped;
+        private TrackingFailureReason lastTrackingFailureReason = TrackingFailureReason.None;
+        private readonly object progressLock = new object();
+        private readonly ConcurrentDictionary<string, AnchorModel> anchorVisuals = new ConcurrentDictionary<string, AnchorModel>();
+                
 
-
-//        public override void Initialize(object session)
-//        {
-//            CloudServices.Initialize(Android.App.Application.Context);
-
-//            this.spatialAnchorsSession = new CloudSpatialAnchorSession();
-//            this.spatialAnchorsSession.Configuration.AccountKey = this.spatialAnchorsAccountKey;
-//            this.spatialAnchorsSession.Configuration.AccountId = this.spatialAnchorsAccountId;
-
-//            this.spatialAnchorsSession.Session = (Google.AR.Core.Session)session;
-//            this.spatialAnchorsSession.LogDebug += this.LogDebug;
-//            this.spatialAnchorsSession.Error += this.Error;
-//            this.spatialAnchorsSession.AnchorLocated += this.AnchorLocated;
-//            this.spatialAnchorsSession.LocateAnchorsCompleted += this.LocateAnchorsCompleted;
-//            this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;
-//        }
-
-
-//        /// <summary>
-//        /// Starts the AR session
-//        /// </summary>
-//        public override void StartSession()
-//        {
-//            this.spatialAnchorsSession.Start();
-//            this.sessionStarted = true;
-//        }
+        /// </inheritdoc>
+        public SpatialAnchorsMode Mode { get; protected set; }
 
 
-//        /// <summary>
-//        /// Stops the AR sessions
-//        /// </summary>
-//        public override void StopSession()
-//        {
-//            StopSearching();
-//            if (this.sessionStarted)
-//            {
-//                this.spatialAnchorsSession.Stop();
-//                this.sessionStarted = false;
-//            }
-//        }
+        /// </inheritdoc>
+        public SpatialAnchorStatus Status { get; protected set; }
 
 
-//        /// <summary>
-//        /// Start searching for anchors
-//        /// </summary>
-//        public override void StartSearching()
-//        {
-//            StopSearching();
-//            //return this.spatialAnchorsSession.CreateWatcher(locateCriteria);
-//        }
+        /// </inheritdoc>
+        public EventHandler<SpatialAnchors.Models.Anchor> SaveAnchor { get; set; }
 
 
-//        /// </inheritdoc>
-//        public override void StopSearching()
-//        {
-//            var watcher = this.spatialAnchorsSession.ActiveWatchers.FirstOrDefault();            
-//            watcher?.Stop();
-//            watcher?.Dispose();
-//        }
+        /// </inheritdoc>
+        public EventHandler<string> ShowMessage { get; set; }
 
 
-//        /// </inheritdoc>
-//        public override void Update(object frame)
-//        {
-//            var arFrame = frame as Google.AR.Core.Frame;
-//            if (arFrame.Camera.TrackingState != this.lastTrackingState
-//                || arFrame.Camera.TrackingFailureReason != this.lastTrackingFailureReason)
-//            {
-//                this.lastTrackingState = arFrame.Camera.TrackingState;
-//                this.lastTrackingFailureReason = arFrame.Camera.TrackingFailureReason;                
-//            }
-//            Task.Run(() => this.spatialAnchorsSession.ProcessFrame(arFrame));
-//        }
+        /// </inheritdoc>
+        public void StartSession(object context, object arScene)
+        {
+            this.context = context as Context; 
+            this.arFragment = arScene as ArFragment;
+            CloudServices.Initialize(this.context);
+            this.spatialAnchorsSession = new CloudSpatialAnchorSession();
+            this.spatialAnchorsSession.Configuration.AccountKey = Constants.SpatialAnchorsAccountKey;
+            this.spatialAnchorsSession.Configuration.AccountId = Constants.SpatialAnchorsAccountId;
+            this.spatialAnchorsSession.Session = this.arFragment.ArSceneView.Session;
+            this.spatialAnchorsSession.AnchorLocated += this.OnAnchorLocated;
+            this.spatialAnchorsSession.LocateAnchorsCompleted += this.OnLocateAnchorsCompleted;
+            this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;
+            this.spatialAnchorsSession.TokenRequired += SpatialAnchorsSession_TokenRequired;
+
+            this.spatialAnchorsSession.Error += (sender, e) =>
+            {
+                SessionErrorEvent eventArgs = e?.Args;
+                if (eventArgs == null) return;                
+                var message = $"{eventArgs.ErrorCode}: {eventArgs.ErrorMessage}";
+            };
+
+            this.spatialAnchorsSession.Start();           
+            this.Status  = SpatialAnchorStatus.Iddle;
+            this.arFragment.TapArPlane += OnTapArPlane;
+        }
 
 
-//        /// </inheritdoc>  
-//        private void LogDebug(object sender, LogDebugEventArgs e)
-//        {
-//            if (string.IsNullOrWhiteSpace(e.Args.Message))
-//            {
-//                return;
-//            }
-//            //Debug.WriteLine(e.Args.Message);
-//            //this.OnLogDebug?.Invoke(sender, e);
-//        }
+
+        private async void SpatialAnchorsSession_TokenRequired(object sender, TokenRequiredEventArgs e)
+        {
+            var token = await this.spatialAnchorsSession.GetAccessTokenWithAccountKeyAsync(Constants.SpatialAnchorsAccountKey).GetAsync();     
+        }
 
 
-//        /// </inheritdoc>
-//        private void SessionUpdated(object sender, SessionUpdatedEventArgs e)
-//        {
-//            var createScanProgress = Math.Min(e.Args.Status.RecommendedForCreateProgress, 1);
+        /// <summary>
+        /// 
+        /// </summary>        
+        private void SessionUpdated(object sender, SessionUpdatedEventArgs e)
+        {
+           if (this.Mode == SpatialAnchorsMode.AddAnchors && this.Status == SpatialAnchorStatus.Scanning)
+            {
+                float progress = e.Args.Status.RecommendedForCreateProgress;
+                var enoughDataForSaving = progress >= 1.0;
+                lock (this.progressLock)
+                {
 
-//            //Debug.WriteLine($"Create scan progress: {createScanProgress:0%}");
-//            //this.CreateScanningProgressValue = createScanProgress;
-//            //this.OnSessionUpdated?.Invoke(sender, e.Args);
-//        }
+                    if (this.Status == SpatialAnchorStatus.Scanning && !enoughDataForSaving)
+                    {                     
+                        return;
+                    }
+                    if (enoughDataForSaving)
+                    {
+                        if (this.Status == SpatialAnchorStatus.Saving) return;
+                        if (this.anchorVisuals.TryGetValue(string.Empty, out AnchorModel model))
+                        {
+                            try
+                            {
+                                this.Status = SpatialAnchorStatus.Saving;
+                                var cloudAnchor = new CloudSpatialAnchor
+                                {
+                                    LocalAnchor = model.LocalAnchor.Anchor
+                                };
+                                model.CloudAnchor = cloudAnchor;
+                                var now = new Date();
+                                var calendar = Calendar.Instance;
+                                calendar.Time = now;
+                                calendar.Add(CalendarField.Date, 7);
+                                var oneWeekFromNow = calendar.Time;
+                                cloudAnchor.Expiration = oneWeekFromNow;
+                                Task.Run(async () =>
+                                {
+                                    try
+                                    {
+                                        ShowMessage(this, "SavingAnchor");
+                                        var result = await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor).GetAsync();
+                                        var anchorId = cloudAnchor.Identifier;
+                                        this.anchorVisuals[anchorId] = model;
+                                        this.anchorVisuals.TryRemove(string.Empty, out _);
+                                        SaveAnchor(this, new SpatialAnchors.Models.Anchor { AnchorId = cloudAnchor.Identifier });                                        
+                                        this.Status = SpatialAnchorStatus.Iddle;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        ShowMessage(this, "ErrorSavingAnchor");
+                                    }
+                                });
+                            }
+                            catch
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
-//        /// </inheritdoc>
-//        private void Error(object sender, SessionErrorEventArgs e)
-//        {
-//            SessionErrorEvent eventArgs = e?.Args;
-//            /*if (eventArgs == null)
-//            {
-//                Debug.WriteLine("Azure Spatial Anchors reported an unspecified error.");
-//                return;
-//            }
-//            string message = $"{eventArgs.ErrorCode}: {eventArgs.ErrorMessage}";
-//            Debug.WriteLine(message);
-//            this.OnSessionError?.Invoke(sender, eventArgs);*/
-//        }
+        /// </inheritdoc>
+        public void StopSession()
+        {            
+            if (this.Status != SpatialAnchorStatus.NotStarted)
+            {
+                StopLocatingAnchors();
+                this.spatialAnchorsSession.Stop();
+                this.Status = SpatialAnchorStatus.NotStarted;
+            }
+        }
 
 
-//        /// <summary>
-//        /// Called when finishing locating an specific anchor
-//        /// </summary>        
-//        private void AnchorLocated(object sender, AnchorLocatedEventArgs e)
-//        {
-//            //this.OnAnchorLocated?.Invoke(sender, e.Args);
-//        }
+        /// </inheritdoc>
+        public void ProcessFrame(object frame)
+        {
+            var arFrame = frame as Frame;
+            if (arFrame.Camera.TrackingState != this.lastTrackingState
+                || arFrame.Camera.TrackingFailureReason != this.lastTrackingFailureReason)
+            {
+                this.lastTrackingState = arFrame.Camera.TrackingState;
+                this.lastTrackingFailureReason = arFrame.Camera.TrackingFailureReason;
+            }
+            Task.Run(() => this.spatialAnchorsSession.ProcessFrame(arFrame));
+        }
+
+        
+        /// <summary>
+        /// Called when it finish to locating anchors
+        /// </summary>       
+        private void OnLocateAnchorsCompleted(object sender, LocateAnchorsCompletedEventArgs e)
+        {
+            StopLocatingAnchors();          
+        }
 
 
-//        /// <summary>
-//        /// Called when finished locating an anchors
-//        /// </summary>
-//        private void LocateAnchorsCompleted(object sender, LocateAnchorsCompletedEventArgs e)
-//        {
-//            //this.OnLocateAnchorsCompleted?.Invoke(sender, e.Args);
-//        }
+        /// </inheritdoc>  
+        public void StartLocatingAnchors(string[] anchors)
+        {            
+            StopLocatingAnchors();
+            var criteria = new AnchorLocateCriteria();
+            criteria.SetIdentifiers(anchors);
+            this.spatialAnchorsSession.CreateWatcher(criteria);
+        }
 
 
-//        /// <summary>
-//        /// Creates a new anchor
-//        /// </summary>        
-//        public override async Task<object> CreateAnchorAsync(object platformAnchor)
-//        {
-//            var newCloudAnchor = platformAnchor as CloudSpatialAnchor;
-//            if (newCloudAnchor == null)
-//            {
-//                throw new ArgumentNullException(nameof(newCloudAnchor));
-//            }
-//            if (newCloudAnchor.LocalAnchor == null || !string.IsNullOrEmpty(newCloudAnchor.Identifier))
-//            {
-//                throw new ArgumentException("The specified cloud anchor cannot be saved.", nameof(newCloudAnchor));
-//            }
-//            //if (!this.CanCreateAnchor)
-//            //{
-//            //    throw new ArgumentException("Not ready to create. Need more data.");
-//            //}
-//            try
-//            {
-//                await this.spatialAnchorsSession.CreateAnchorAsync(newCloudAnchor).GetAsync();
-//            }
-//            catch (Exception ex)
-//            {
-//               // Debug.WriteLine(ex.Message);
-//            }
-//            return newCloudAnchor;
-//        }
-//    }
-//}
+
+        /// <summary>
+        /// Stops searching for anchors, only one watcher is active
+        /// </summary>
+        private void StopLocatingAnchors()
+        {
+            var watcher = this.spatialAnchorsSession.ActiveWatchers.FirstOrDefault();
+            watcher?.Stop();
+            watcher?.Dispose();
+        }
+
+
+        /// <summary>
+        /// Called when an anchor is found
+        /// </summary>        
+        private void OnAnchorLocated(object sender, AnchorLocatedEventArgs e)
+        {
+            var status = e.Args.Status;
+            if (status == LocateAnchorStatus.AlreadyTracked)
+            {
+                // Nothing to do since we've already rendered any anchors we've located.
+            }
+            else if (status == LocateAnchorStatus.Located)
+            {
+                //ShowMessage("Anchor found");
+                var activity = this.context as Activity;
+                activity?.RunOnUiThread(() =>
+                {
+                    var cloudAnchor = e.Args.Anchor;
+                    var model = CreateModel(new AnchorNode(cloudAnchor.LocalAnchor), e.Args.Anchor);
+                    this.anchorVisuals[cloudAnchor.Identifier] = model;
+                });
+            }
+        }
+
+
+        /// <summary>
+        /// Adds a model whe the user taps on the plane
+        /// </summary>        
+        private void OnTapArPlane(object sender, BaseArFragment.TapArPlaneEventArgs e)
+        {
+            if (modelRenderable == null) return;
+            if (this.Mode == SpatialAnchorsMode.AddAnchors &&
+                this.Status == SpatialAnchorStatus.Iddle)
+            {
+                var model = CreateModel(new AnchorNode(e.HitResult.CreateAnchor()), null);
+                this.anchorVisuals[string.Empty] = model;
+                this.Status = SpatialAnchorStatus.Scanning; 
+            }
+        }
+
+
+        /// <summary>
+        /// Creates 3D model with the specified anchors
+        /// </summary>        
+        private AnchorModel CreateModel(AnchorNode localAnchor, CloudSpatialAnchor cloudAnchor)
+        {
+            var anchorModel = new AnchorModel
+            {
+                LocalAnchor = localAnchor,
+                CloudAnchor = cloudAnchor
+            };
+            localAnchor.SetParent(arFragment.ArSceneView.Scene);
+            var model = new TransformableNode(arFragment.TransformationSystem);
+            model.SetParent(localAnchor);
+            model.Renderable = this.modelRenderable;
+            model.Select();
+            return anchorModel;
+        }
+
+
+        /// <summary>
+        /// Loads the 3D models to use        
+        /// </summary>
+        public void LoadModels()
+        {
+            ModelRenderable.InvokeBuilder().SetSource(this.context, Resource.Raw.andy).Build(renderable =>
+            {
+                modelRenderable = renderable;
+            });
+        }
+    }
+}

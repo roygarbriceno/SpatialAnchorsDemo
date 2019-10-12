@@ -8,9 +8,9 @@
                            x:Class="SpatialAnchors.Core.Pages.MainPage">
 
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Button Text="Create Anchors" Command="{Binding CreateAnchorsCommand}" />
+        <Button Text="Create Anchors" Command="{Binding CreateAnchorsCommand}" IsEnabled="{Binding IsEnabled}"/>
 
-        <Button Text="Search Anchors" Command="{Binding SearchAnchorsCommand}" />
+        <Button Text="Search Anchors" Command="{Binding SearchAnchorsCommand}" IsEnabled="{Binding IsEnabled}" />
    
     </StackLayout>
 </views:MvxContentPage>

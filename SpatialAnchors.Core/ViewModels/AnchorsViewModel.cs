@@ -1,43 +1,58 @@
 ﻿namespace SpatialAnchors.Core.ViewModels
-{
-    using MvvmCross.Commands;
+{    
     using MvvmCross.Logging;
-    using MvvmCross.Navigation;
-    using MvvmCross.ViewModels;
-    using SpatialAnchors.Core.Arguments;    
-    using System;    
-    using System.Threading.Tasks;
-
+    using MvvmCross.Navigation; 
+    using SpatialAnchors.Core.Arguments;
+    using SpatialAnchors.Core.Interfaces;
+    using System;
+    using System.Linq;
+    
 
     /// <summary>
     /// AR Logic
     /// </summary>
     public class AnchorsViewModel : BaseViewModel<SpatialAnchorsParameter>
     {
-        private IMvxCommand captureChallengeCommand;
+        private ISpatialAnchorsService spatialAnchorsService;
+        private SpatialAnchorsParameter parameters;
+
+    
+        /// <summary>
+        /// Current mode of the session
+        /// </summary>
+        public SpatialAnchorsMode Mode { get => this.spatialAnchorsService.Mode; } 
+
 
         /// <summary>
-        /// ViewModel parameters
+        /// Current status of the session
         /// </summary>
-        public SpatialAnchorsParameter Parameters { get; private set; }
-
-
-        /// <summary>
-        /// Request the image to captured for sending the challenge
-        /// </summary>
-        public IMvxCommand CaptureChallengeCommand => captureChallengeCommand ?? (captureChallengeCommand = new MvxCommand(() =>
-        {
-           // captureImageInteraction.Raise();
-        }));
+        public SpatialAnchorStatus Status { get => this.spatialAnchorsService.Status; }
 
 
         /// <summary>
         /// Gets by DI the required services
         /// </summary>
         public AnchorsViewModel(IMvxLogProvider logProvider,
-            IMvxNavigationService navigationService) : base(logProvider, navigationService)
+            IMvxNavigationService navigationService, ISpatialAnchorsService spatialAnchorsService) : base(logProvider, navigationService)
         {
+            this.spatialAnchorsService = spatialAnchorsService;
 
+            this.spatialAnchorsService.SaveAnchor += async (sender, args) =>
+            {
+                try
+                {
+                    await this.DataService.SaveAnchorAsync(args);
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("ErrorSavingAnchor", ex.Message);
+                }
+            };
+
+            this.spatialAnchorsService.ShowMessage += (sender, args) =>
+            {
+                ShowMessage(args);
+            };
         }
 
 
@@ -46,32 +61,55 @@
         /// </summary>        
         public override void Prepare(SpatialAnchorsParameter parameter)
         {
-            this.Parameters = parameter;
+            this.parameters = parameter;
         }
 
-
-     
 
         /// <summary>
-        /// Saves an anchor
+        /// Starts the AR session
         /// </summary>        
-        public async Task<bool> SaveAnchorAsync(SpatialAnchors.Models.Anchor anchor)
+        public void StartSession(object context, object scene)
         {
-            try
-            {
-                if (await this.DataService.SaveAnchorAsync(anchor))
-                {
-                    //this.Anchors.Add(anchor);
-                    return true;
-                }                
-            }
-            catch (Exception ex)
-            {
+            this.spatialAnchorsService.StartSession(context, scene);
+            this.spatialAnchorsService.LoadModels();
 
+            if (this.parameters.Mode == SpatialAnchorsMode.SearchAnchors)
+            {
+                this.spatialAnchorsService.StartLocatingAnchors(this.parameters.Anchors.Select(x=>x.AnchorId).ToArray());
+                ShowMessage("StartLocatingAnchors");
             }
-            return false;
+            else
+            {
+                ShowMessage("StartAddingAnchors");
+            }
         }
 
-        
+
+        /// <summary>
+        /// Updates a frame in the AR session
+        /// </summary>        
+        public void ProcessFrame(object frame)
+        {
+            this.spatialAnchorsService.ProcessFrame(frame);
+        }
+
+
+
+        /// <summary>
+        /// Stops the AR session 
+        /// </summary>        
+        public void StopSession()
+        {
+            this.spatialAnchorsService.StopSession();
+        }
+
+
+        /// <summary>
+        /// Shows a message to the user
+        /// </summary>        
+        public void ShowMessage(string message, string details = "")
+        {
+
+        }
     }
 }

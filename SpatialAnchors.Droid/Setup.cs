@@ -37,9 +37,7 @@
         /// </summary>
         protected override void InitializeFirstChance()
         {
-            //Mvx.IoCProvider.RegisterSingleton<ISpatialAnchorsService>(new SpatialAnchorsService());
-            Mvx.IoCProvider.RegisterSingleton<IPlatformService>(new PlatformService());
-            
+            Mvx.IoCProvider.RegisterSingleton<ISpatialAnchorsService>(new SpatialAnchorsService());
             base.InitializeFirstChance();
         }
     }
