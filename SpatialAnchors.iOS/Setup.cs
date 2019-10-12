@@ -2,14 +2,17 @@
 {
     using MvvmCross.Forms.Platforms.Ios.Core;
     using MvvmCross.Logging;
-    using MobileTemplate.Core;
-    using MobileTemplate.Core.Interfaces;
     using SpatialAnchors.iOS.Services;
     using MvvmCross;
     using MvvmCross.Base;
     using MvvmCross.Plugin.Json;
+    using SpatialAnchors.Core;
+    using SpatialAnchors.Core.Interfaces;
 
 
+    /// <summary>
+    /// iOS setup class
+    /// </summary>
     public class Setup : MvxFormsIosSetup<MvxApp, App>
     {
         /// <summary>
@@ -19,10 +22,6 @@
         public override MvxLogProviderType GetDefaultLogProviderType()
             => MvxLogProviderType.Console;
 
-        //protected override IMvxLogProvider CreateLogProvider()
-        //{
-        //    return new MvxLogProvider();
-        //}
 
         /// <summary>
         /// Initializes the platform services
@@ -30,7 +29,7 @@
         protected override void InitializeFirstChance()
         {
             Mvx.IoCProvider.RegisterSingleton<IMvxJsonConverter>(new MvxJsonConverter());
-            Mvx.IoCProvider.RegisterSingleton<IPlatformService>(new PlatformService());
+            Mvx.IoCProvider.RegisterSingleton<ISpatialAnchorsService>(new SpatialAnchorsService());
             base.InitializeFirstChance();
 
         }
