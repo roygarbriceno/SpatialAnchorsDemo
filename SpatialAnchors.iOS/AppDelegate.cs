@@ -1,8 +1,8 @@
 ﻿namespace SpatialAnchors.iOS
 {
     using Foundation;
-    using MobileTemplate.Core;
     using MvvmCross.Forms.Platforms.Ios.Core;
+    using SpatialAnchors.Core;
     using UIKit;
 
     // The UIApplicationDelegate for the application. This class is responsible for launching the
@@ -12,8 +12,7 @@
     {
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
-
+         
             return base.FinishedLaunching(application, launchOptions);
         }
 

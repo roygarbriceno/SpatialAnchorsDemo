@@ -3,20 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ARKit;
+using CoreGraphics;
 using Foundation;
+using OpenTK;
+using SceneKit;
+using SpatialAnchors.Core;
 using SpatialAnchors.Core.Pages;
 using SpatialAnchors.Core.ViewModels;
+using SpatialAnchors.iOS.Delegates;
+using SpatialAnchors.iOS.Renderers;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 
-[assembly: ExportRenderer(typeof(AnchorsPage), typeof(ARPageRenderer))]
+
+[assembly: ExportRenderer(typeof(AnchorsPage), typeof(AnchorsPageRenderer))]
 namespace SpatialAnchors.iOS.Renderers
 {
     /// <summary>
     /// Page Renderer to display AR Screen View from Forms Code, implementing AR ScreenView Delegate
     /// </summary>
-    public class ARPageRenderer : PageRenderer, IARSCNViewDelegate
+    public class AnchorsPageRenderer : PageRenderer, IARSCNViewDelegate
     {
         private ARSCNView sceneView;
         private AnchorsViewModel viewModel;
@@ -24,10 +31,9 @@ namespace SpatialAnchors.iOS.Renderers
         public override bool ShouldAutorotate() => true;
 
 
-        public ARPageRenderer()
+        public AnchorsPageRenderer()
         {
             this.sceneView = new ARSCNView();
-
         }
 
 
@@ -38,15 +44,15 @@ namespace SpatialAnchors.iOS.Renderers
         {
             base.ViewDidLoad();
             this.viewModel = this.Element.BindingContext as AnchorsViewModel;
-
            
             this.sceneView = new ARSCNView
             {
-                Frame = this.View.Frame,
-                Delegate = new ARDelegate(this),
+                Frame = this.View.Frame,              
                 UserInteractionEnabled = true,
                 DebugOptions = ARSCNDebugOptions.ShowFeaturePoints,                
             };
+
+            this.sceneView.Delegate = new ArSessionDelegate(this.sceneView, this.viewModel);
             this.View.AddSubview(this.sceneView);
 
         }
@@ -61,11 +67,20 @@ namespace SpatialAnchors.iOS.Renderers
             try
             {
                 base.ViewWillAppear(animated);
-                var configuration = new ARWorldTrackingConfiguration
+                //var configuration = new ARWorldTrackingConfiguration
+                //{
+                //    PlaneDetection = ARPlaneDetection.Horizontal
+                //};
+                //this.sceneView.Session.Run(configuration, ARSessionRunOptions.RemoveExistingAnchors);
+
+                this.sceneView.Session.Run(new ARWorldTrackingConfiguration
                 {
-                    PlaneDetection = ARPlaneDetection.Horizontal
-                };
-                this.sceneView.Session.Run(configuration, ARSessionRunOptions.RemoveExistingAnchors));
+                    AutoFocusEnabled = true,
+                    PlaneDetection = ARPlaneDetection.Horizontal,
+                    LightEstimationEnabled = true,
+                    WorldAlignment = ARWorldAlignment.GravityAndHeading
+                }, ARSessionRunOptions.ResetTracking | ARSessionRunOptions.RemoveExistingAnchors);
+
             }
             catch (Exception ex)
             {
@@ -83,5 +98,95 @@ namespace SpatialAnchors.iOS.Renderers
             base.ViewDidDisappear(animated);
             this.sceneView.Session.Pause();
         }
+
+
+        public override void TouchesBegan(NSSet touches, UIEvent evt)
+        {
+            this.View.EndEditing(true);
+            base.TouchesBegan(touches, evt);
+
+            if (this.viewModel.Mode != SpatialAnchorsMode.AddAnchors) return;         
+            var touch = touches.AnyObject as UITouch;
+            if (touch != null)
+            {
+                var touchLocation = touch.LocationInView(this.sceneView);
+
+                var worldPos = WorldPositionFromHitTest(touchLocation);
+
+
+                /*if (this.TryHitTestFromTouchPoint(touchLocation, out NMatrix4 worldTransform))
+                {
+                    //this.CreateLocalAnchor(ref worldTransform);
+                }*/
+                /*else
+                {
+                    this.UpdateMainStatusTitle("Trouble placing anchor. Please try again");
+                }*/
+            }
+            else
+            {
+                //this.UpdateMainStatusTitle("Trouble placing anchor. Please try again");
+            }
+        }
+
+        /// <summary>
+        /// Getting world position from touch hit
+        /// </summary>
+        Tuple<SCNVector3?, ARAnchor> WorldPositionFromHitTest(CGPoint pt)
+        {
+            //Hit test against existing anchors
+            var hits = this.sceneView.HitTest(pt, ARHitTestResultType.ExistingPlaneUsingExtent);
+            if (hits != null && hits.Length > 0)
+            {
+                var anchors = hits.Where(r => r.Anchor is ARPlaneAnchor);
+                if (anchors.Count() > 0)
+                {
+                    var first = anchors.First();
+                    var pos = PositionFromTransform(first.WorldTransform);
+                    return new Tuple<SCNVector3?, ARAnchor>(pos, (ARPlaneAnchor)first.Anchor);
+                }
+            }
+            return new Tuple<SCNVector3?, ARAnchor>(null, null);
+        }
+
+
+        private SCNVector3 PositionFromTransform(NMatrix4 xform)
+        {
+            return new SCNVector3(xform.M14, xform.M24, xform.M34);
+        }
+
+        /// <summary>
+        /// Hit test against existing anchors
+        /// </summary>        
+        private bool TryHitTestFromTouchPoint(CGPoint pt, out NMatrix4 worldTransform)
+        {
+            
+            ARHitTestResult[] hits = this.sceneView.HitTest(pt, ARHitTestResultType.FeaturePoint);
+            if (hits != null && hits.Length > 0)
+            {
+                ARHitTestResult hit = hits.FirstOrDefault();
+                if (hit != null)
+                {
+                    worldTransform = hit.WorldTransform;
+                    return true;
+                }
+            }
+            worldTransform = default;
+            return false;
+        }
+
+
+        ///// <summary>
+        ///// Places the model
+        ///// </summary>        
+        //private void PlaceModel(SCNVector3 pos)
+        //{
+        //    var asset = $"art.scnassets/Andy/andy.obj";
+        //    var texture = $"art.scnassets/Andy/andy.png";
+        //    var model = CreateModelFromFile(asset, texture, "andy", pos);
+        //    if (model == null) return;
+        //    this.sceneView.Scene.RootNode.AddChildNode(model);
+        //}
+
     }
 }

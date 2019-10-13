@@ -1,4 +1,6 @@
-﻿namespace SpatialAnchors.iOS
+﻿using UIKit;
+
+namespace SpatialAnchors.iOS
 {
     public class Application
     {
