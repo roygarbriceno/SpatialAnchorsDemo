@@ -81,6 +81,8 @@ namespace SpatialAnchors.iOS.Renderers
                     WorldAlignment = ARWorldAlignment.GravityAndHeading
                 }, ARSessionRunOptions.ResetTracking | ARSessionRunOptions.RemoveExistingAnchors);
 
+                this.viewModel.StartSession(null, this.sceneView);
+
             }
             catch (Exception ex)
             {
