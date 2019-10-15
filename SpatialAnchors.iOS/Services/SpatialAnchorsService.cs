@@ -8,6 +8,15 @@ using System.Collections.Concurrent;
 using SpatialAnchors.IOS.Models;
 using ARKit;
 
+using SceneKit;
+using CoreGraphics;
+using Foundation;
+using OpenTK;
+using System.Diagnostics;
+using UIKit;
+
+
+
 namespace SpatialAnchors.iOS.Services
 {
     /// <summary>
@@ -47,10 +56,7 @@ namespace SpatialAnchors.iOS.Services
         {          
             this.sceneView = arScene as ARSCNView;
             this.spatialAnchorsSession = new CloudSpatialAnchorSession();
-            //{
-            //    Session = this.sceneView.Session,
-            //    LogLevel = SessionLogLevel.Information
-            //};
+            
             this.spatialAnchorsSession.Configuration.AccountKey = Constants.SpatialAnchorsAccountKey;
             this.spatialAnchorsSession.Configuration.AccountId = Constants.SpatialAnchorsAccountId;
             this.spatialAnchorsSession.Session = this.sceneView.Session;
@@ -188,9 +194,9 @@ namespace SpatialAnchors.iOS.Services
                 //    LocalAnchor = this.localAnchor
                 //};
 
-                // In this sample app we delete the cloud anchor explicitly, but you can also set it to expire automatically
-                DateTime now = DateTime.Today;
-                DateTimeOffset oneWeekFromNow = now.AddDays(7);
+                //// In this sample app we delete the cloud anchor explicitly, but you can also set it to expire automatically
+                //DateTime now = DateTime.Today;
+                //DateTimeOffset oneWeekFromNow = now.AddDays(7);
 //                this.cloudAnchor.Expiration = oneWeekFromNow;
 
                 Task.Run(async () =>
@@ -249,68 +255,66 @@ namespace SpatialAnchors.iOS.Services
         /// </summary>        
         private void OnAnchorLocated(object sender, AnchorLocatedEventArgs e)
         {
-            //var status = e.Args.Status;
-            //if (status == LocateAnchorStatus.AlreadyTracked)
-            //{
-            //    // Nothing to do since we've already rendered any anchors we've located.
-            //}
-            //else if (status == LocateAnchorStatus.Located)
-            //{                
-            //    var activity = this.context as Activity;
-            //    activity?.RunOnUiThread(() =>
-            //    {
-            //        var cloudAnchor = e.Args.Anchor;
-            //        var model = CreateModel(new AnchorNode(cloudAnchor.LocalAnchor), e.Args.Anchor);
-            //        this.anchorVisuals[cloudAnchor.Identifier] = model;
-            //    });
-            //}
+            if (e.Status == LocateAnchorStatus.AlreadyTracked)
+            {
+                // Nothing to do since we've already rendered any anchors we've located.
+            }
+            else if (e.Status == LocateAnchorStatus.Located)
+            {
+                var anchor = e.Anchor;                
+                var model = new AnchorModel
+                {
+                    CloudAnchor = anchor,                    
+                    LocalAnchor = anchor.LocalAnchor
+                };
+                this.anchorVisuals[anchor.Identifier] = model;
+                this.sceneView.Session.AddAnchor(anchor.LocalAnchor);
+
+                var modelNode = LoadMOdel();                
+                modelNode.Position = model.LocalAnchor.Transform.ToPosition();               
+                this.sceneView.Scene.RootNode.AddChildNode(modelNode);            
+            }
         }
 
 
-        ///// <summary>
-        ///// Adds a model whe the user taps on the plane
-        ///// </summary>        
-        //private void OnTapArPlane(object sender, BaseArFragment.TapArPlaneEventArgs e)
-        //{
-        //    //if (modelRenderable == null) return;
-        //    //if (this.Mode == SpatialAnchorsMode.AddAnchors &&
-        //    //    this.Status == SpatialAnchorStatus.Iddle)
-        //    //{
-        //    //    var model = CreateModel(new AnchorNode(e.HitResult.CreateAnchor()), null);
-        //    //    this.anchorVisuals[string.Empty] = model;                
-        //    //    this.Status = SpatialAnchorStatus.Scanning; 
-        //    //}
-        //}
+        /// <summary>
+        /// Load the Andy Android Model
+        /// </summary>        
+        private SCNNode LoadMOdel()
+        {
+            try
+            {
+                var modelName = "art.scnassets/sonic.usdz";                    
+                var scene = SCNScene.FromFile(modelName);
+                var modelNode = scene.RootNode.ChildNodes[0];              
+                modelNode.Scale = new SCNVector3(0.1f, 0.1f, 0.1f);
+                return modelNode;
+            }
+            catch (Exception ex)
+            {
+                ShowMessage(this, ex.Message);
+            }
+            return null;
+        }
 
-
-        ///// <summary>
-        ///// Creates 3D model with the specified anchors
-        ///// </summary>        
-        //private AnchorModel CreateModel(AnchorNode localAnchor, CloudSpatialAnchor cloudAnchor)
-        //{
-        //    //var anchorModel = new AnchorModel
-        //    //{
-        //    //    LocalAnchor = localAnchor,
-        //    //    CloudAnchor = cloudAnchor
-        //    //};
-        //    //localAnchor.SetParent(arFragment.ArSceneView.Scene);
-        //    //var model = new TransformableNode(arFragment.TransformationSystem);
-        //    //model.SetParent(localAnchor);
-        //    //model.Renderable = this.modelRenderable;
-        //    //model.Select();
-        //    //return anchorModel;
-        //}
 
 
         /// <summary>
         /// Loads the 3D models to use        
         /// </summary>
         public void LoadModels()
+        {            
+        }
+    }
+
+    public static class NMatrix4Extensions
+    {
+        /// <summary>
+        /// Converts a transform to a position.
+        /// </summary>
+        public static SCNVector3 ToPosition(this NMatrix4 transform)
         {
-            //ModelRenderable.InvokeBuilder().SetSource(this.context, Resource.Raw.andy).Build(renderable =>
-            //{
-            //    modelRenderable = renderable;
-            //});
+            return new SCNVector3(transform.M14, transform.M24, transform.M34);
         }
     }
 }

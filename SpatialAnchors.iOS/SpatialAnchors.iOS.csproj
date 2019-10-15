@@ -73,6 +73,8 @@
     <BundleResource Include="..\Languages\Texts.json">
       <Link>Languages\Texts.json</Link>
     </BundleResource>
+    <SceneKitAsset Include="art.scnassets\Andy.usdz" />
+    <SceneKitAsset Include="art.scnassets\sonic.usdz" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Entitlements.plist" />
@@ -106,9 +108,7 @@
       <Version>4.2.0.848062</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="art.scnassets\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SpatialAnchors.Core\SpatialAnchors.Core.csproj">
       <Project>{dec89e21-22ce-4cf5-b40c-0e5ef6f96c3d}</Project>

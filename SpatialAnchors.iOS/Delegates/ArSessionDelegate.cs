@@ -62,8 +62,7 @@ namespace SpatialAnchors.iOS.Delegates
             {
                 if (frame == null) return;
                 this.viewModel.ProcessFrame(frame);                
-                /*this.source.cloudSession.ProcessFrame(frame);
-
+                /*
                 if (this.source.currentlyPlacingAnchor && this.source.enoughDataForSaving && this.source.localAnchor != null)
                 {
                     this.source.CreateCloudAnchor();

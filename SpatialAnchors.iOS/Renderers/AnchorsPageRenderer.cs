@@ -49,7 +49,7 @@ namespace SpatialAnchors.iOS.Renderers
             {
                 Frame = this.View.Frame,              
                 UserInteractionEnabled = true,
-                DebugOptions = ARSCNDebugOptions.ShowFeaturePoints,                
+                //DebugOptions = ARSCNDebugOptions.,                
             };
 
             this.sceneView.Delegate = new ArSessionDelegate(this.sceneView, this.viewModel);
@@ -66,13 +66,7 @@ namespace SpatialAnchors.iOS.Renderers
             base.ViewWillAppear(animated);
             try
             {
-                base.ViewWillAppear(animated);
-                //var configuration = new ARWorldTrackingConfiguration
-                //{
-                //    PlaneDetection = ARPlaneDetection.Horizontal
-                //};
-                //this.sceneView.Session.Run(configuration, ARSessionRunOptions.RemoveExistingAnchors);
-
+                base.ViewWillAppear(animated);                
                 this.sceneView.Session.Run(new ARWorldTrackingConfiguration
                 {
                     AutoFocusEnabled = true,
@@ -125,10 +119,7 @@ namespace SpatialAnchors.iOS.Renderers
                     this.UpdateMainStatusTitle("Trouble placing anchor. Please try again");
                 }*/
             }
-            else
-            {
-                //this.UpdateMainStatusTitle("Trouble placing anchor. Please try again");
-            }
+           
         }
 
         /// <summary>
