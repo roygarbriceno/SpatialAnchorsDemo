@@ -8,10 +8,10 @@
                            x:Class="SpatialAnchors.Core.Pages.MainPage"
                            mvx:La.ng="Title AppTitle, FallbackValue=AppTitle">
 
-    <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+    <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="24">
+        <Button mvx:La.ng="Text LocateAnchors, FallbackValue=AppTitle" Command="{Binding SearchAnchorsCommand}" IsEnabled="{Binding IsEnabled}" />
+
         <Button mvx:La.ng="Text AddAnchors, FallbackValue=AppTitle" Command="{Binding CreateAnchorsCommand}" IsEnabled="{Binding IsEnabled}"/>
 
-        <Button mvx:La.ng="Text LocateAnchors, FallbackValue=AppTitle" Command="{Binding SearchAnchorsCommand}" IsEnabled="{Binding IsEnabled}" />
-   
     </StackLayout>
 </views:MvxContentPage>

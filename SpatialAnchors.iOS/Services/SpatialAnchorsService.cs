@@ -284,7 +284,7 @@ namespace SpatialAnchors.iOS.Services
         {
             try
             {
-                var modelName = "art.scnassets/sonic.usdz";                    
+                var modelName = "art.scnassets/andy.usdz";                    
                 var scene = SCNScene.FromFile(modelName);
                 var modelNode = scene.RootNode.ChildNodes[0];              
                 modelNode.Scale = new SCNVector3(0.1f, 0.1f, 0.1f);

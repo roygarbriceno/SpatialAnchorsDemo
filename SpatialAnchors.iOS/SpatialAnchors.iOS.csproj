@@ -73,8 +73,7 @@
     <BundleResource Include="..\Languages\Texts.json">
       <Link>Languages\Texts.json</Link>
     </BundleResource>
-    <SceneKitAsset Include="art.scnassets\Andy.usdz" />
-    <SceneKitAsset Include="art.scnassets\sonic.usdz" />
+    <SceneKitAsset Include="art.scnassets\andy.usdz" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Entitlements.plist" />
