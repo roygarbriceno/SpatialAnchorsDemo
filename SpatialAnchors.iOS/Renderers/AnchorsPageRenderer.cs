@@ -110,18 +110,10 @@ namespace SpatialAnchors.iOS.Renderers
                 var worldPos = WorldPositionFromHitTest(touchLocation);
                 if (worldPos.Item1.HasValue)
                 {
-                    Mvx.IoCProvider.GetSingleton<ISpatialAnchorsService>()?
-                        .PlaceModel(worldPos.Item1.Value.X, worldPos.Item1.Value.Y, worldPos.Item1.Value.Z);                    
+                    this.TryHitTestFromTouchPoint(touchLocation,  out NMatrix4 worldTransform);
+                    Mvx.IoCProvider.GetSingleton<ISpatialAnchorsService>()?.PlaceModel(worldTransform);                    
                 }
-
-                /*if (this.TryHitTestFromTouchPoint(touchLocation, out NMatrix4 worldTransform))
-                {
-                    //this.CreateLocalAnchor(ref worldTransform);
-                }*/
-                /*else
-                {
-                    this.UpdateMainStatusTitle("Trouble placing anchor. Please try again");
-                }*/
+             
             }
            
         }

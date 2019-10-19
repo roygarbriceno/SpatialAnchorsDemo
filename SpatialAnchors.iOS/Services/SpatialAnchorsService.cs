@@ -82,7 +82,7 @@ namespace SpatialAnchors.iOS.Services
                 if (this.enoughDataForSaving)
                 {
                     // on IOS saving an anchor happern during the process frame
-                    this.Status = SpatialAnchorStatus.Saving;
+                   
                 }
             }                      
         }
@@ -122,6 +122,7 @@ namespace SpatialAnchors.iOS.Services
                 if (this.Status == SpatialAnchorStatus.Saving) return;
                 if (this.anchorVisuals.TryGetValue(string.Empty, out AnchorModel model))
                 {
+                    this.Status = SpatialAnchorStatus.Saving;
                     this.cloudAnchor = new CloudSpatialAnchor
                     {
                         LocalAnchor = this.localAnchor
@@ -141,11 +142,15 @@ namespace SpatialAnchors.iOS.Services
                             this.anchorVisuals[anchorId] = model;
                             this.anchorVisuals.TryRemove(string.Empty, out _);
                             SaveAnchor(this, new Models.Anchor { AnchorId = cloudAnchor.Identifier });
-                            this.Status = SpatialAnchorStatus.Iddle;
+                           
                         }
                         catch (Exception ex)
                         {
                             ShowMessage(this, "ErrorSavingAnchor");
+                        }
+                        finally
+                        {
+                            this.Status = SpatialAnchorStatus.Iddle;
                         }
                     });
                 }
