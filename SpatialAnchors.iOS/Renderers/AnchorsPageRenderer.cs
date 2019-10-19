@@ -5,9 +5,11 @@ using System.Text;
 using ARKit;
 using CoreGraphics;
 using Foundation;
+using MvvmCross;
 using OpenTK;
 using SceneKit;
 using SpatialAnchors.Core;
+using SpatialAnchors.Core.Interfaces;
 using SpatialAnchors.Core.Pages;
 using SpatialAnchors.Core.ViewModels;
 using SpatialAnchors.iOS.Delegates;
@@ -49,7 +51,6 @@ namespace SpatialAnchors.iOS.Renderers
             {
                 Frame = this.View.Frame,              
                 UserInteractionEnabled = true,
-                //DebugOptions = ARSCNDebugOptions.,                
             };
 
             this.sceneView.Delegate = new ArSessionDelegate(this.sceneView, this.viewModel);
@@ -106,9 +107,12 @@ namespace SpatialAnchors.iOS.Renderers
             if (touch != null)
             {
                 var touchLocation = touch.LocationInView(this.sceneView);
-
                 var worldPos = WorldPositionFromHitTest(touchLocation);
-
+                if (worldPos.Item1.HasValue)
+                {
+                    Mvx.IoCProvider.GetSingleton<ISpatialAnchorsService>()?
+                        .PlaceModel(worldPos.Item1.Value.X, worldPos.Item1.Value.Y, worldPos.Item1.Value.Z);                    
+                }
 
                 /*if (this.TryHitTestFromTouchPoint(touchLocation, out NMatrix4 worldTransform))
                 {
@@ -148,6 +152,7 @@ namespace SpatialAnchors.iOS.Renderers
             return new SCNVector3(xform.M14, xform.M24, xform.M34);
         }
 
+
         /// <summary>
         /// Hit test against existing anchors
         /// </summary>        
@@ -167,19 +172,5 @@ namespace SpatialAnchors.iOS.Renderers
             worldTransform = default;
             return false;
         }
-
-
-        ///// <summary>
-        ///// Places the model
-        ///// </summary>        
-        //private void PlaceModel(SCNVector3 pos)
-        //{
-        //    var asset = $"art.scnassets/Andy/andy.obj";
-        //    var texture = $"art.scnassets/Andy/andy.png";
-        //    var model = CreateModelFromFile(asset, texture, "andy", pos);
-        //    if (model == null) return;
-        //    this.sceneView.Scene.RootNode.AddChildNode(model);
-        //}
-
     }
 }

@@ -6,7 +6,8 @@
                            xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
                            xmlns:viewModels="clr-namespace:SpatialAnchors.Core.ViewModels;assembly=SpatialAnchors.Core"
                            x:Class="SpatialAnchors.Core.Pages.MainPage"
-                           mvx:La.ng="Title AppTitle, FallbackValue=AppTitle">
+                           mvx:La.ng="Title AppTitle, FallbackValue=AppTitle"
+                           Visual="Material">
 
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="24">
         <Button mvx:La.ng="Text LocateAnchors, FallbackValue=AppTitle" Command="{Binding SearchAnchorsCommand}" IsEnabled="{Binding IsEnabled}" />

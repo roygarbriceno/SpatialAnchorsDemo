@@ -44,7 +44,12 @@
         /// </summary>        
         void StartLocatingAnchors(string[] anchors);
 
-      
+
+        /// <summary>
+        /// Places a model on a point
+        /// </summary>   
+        void PlaceModel(object transform);
+
         /// <summary>
         /// Stops the AR sessions
         /// </summary>

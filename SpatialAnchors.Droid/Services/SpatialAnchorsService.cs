@@ -188,9 +188,17 @@ namespace SpatialAnchors.Droid.Services
 
 
         /// </inheritdoc>  
+        public void PlaceModel(object transform)
+        {
+
+        }
+
+
+        /// </inheritdoc>  
         public void StartLocatingAnchors(string[] anchors)
-        {            
-            StopLocatingAnchors();
+        {
+            this.Mode = SpatialAnchorsMode.SearchAnchors;
+            StopLocatingAnchors();            
             var criteria = new AnchorLocateCriteria();
             criteria.SetIdentifiers(anchors);
             this.spatialAnchorsSession.CreateWatcher(criteria);

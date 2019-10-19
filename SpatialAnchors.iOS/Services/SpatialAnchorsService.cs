@@ -7,13 +7,8 @@ using SpatialAnchors.Core;
 using System.Collections.Concurrent;
 using SpatialAnchors.IOS.Models;
 using ARKit;
-
 using SceneKit;
-using CoreGraphics;
-using Foundation;
 using OpenTK;
-using System.Diagnostics;
-using UIKit;
 
 
 
@@ -25,15 +20,11 @@ namespace SpatialAnchors.iOS.Services
     public class SpatialAnchorsService : ISpatialAnchorsService
     {
         private ARSCNView sceneView;
-        //private ModelRenderable modelRenderable;                
-        //private Context context;
         private CloudSpatialAnchorSession spatialAnchorsSession;
-        //private TrackingState lastTrackingState = TrackingState.Stopped;
-        //private TrackingFailureReason lastTrackingFailureReason = TrackingFailureReason.None;
-        //private readonly object progressLock = new object();
         private bool enoughDataForSaving;
         private readonly ConcurrentDictionary<string, AnchorModel> anchorVisuals = new ConcurrentDictionary<string, AnchorModel>();
-                
+        private ARAnchor localAnchor;               // Local temp anchor when creating them
+        private CloudSpatialAnchor cloudAnchor;     // Local temp clound anchor when saving them
 
         /// </inheritdoc>
         public SpatialAnchorsMode Mode { get; protected set; }
@@ -63,7 +54,6 @@ namespace SpatialAnchors.iOS.Services
             this.spatialAnchorsSession.AnchorLocated += this.OnAnchorLocated;
             this.spatialAnchorsSession.LocateAnchorsCompleted += this.OnLocateAnchorsCompleted;
             this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;
-            //this.spatialAnchorsSession.TokenRequired += SpatialAnchorsSession_TokenRequired;
             this.spatialAnchorsSession.Error += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.ErrorMessage))
@@ -78,12 +68,6 @@ namespace SpatialAnchors.iOS.Services
 
 
 
-        //private async void SpatialAnchorsSession_TokenRequired(object sender, TokenRequiredEventArgs e)
-        //{
-        //   // var token = await this.spatialAnchorsSession.GetAccessTokenWithAccountKeyAsync(Constants.SpatialAnchorsAccountKey).GetAsync();     
-        //}
-
-
         /// <summary>
         /// 
         /// </summary>        
@@ -96,59 +80,10 @@ namespace SpatialAnchors.iOS.Services
 
                 if (this.enoughDataForSaving)
                 {
-                    this.Status = SpatialAnchorStatus.Saving; 
+                    // on IOS saving an anchor happern during the process frame
+                    this.Status = SpatialAnchorStatus.Saving;
                 }
-                    
-                    //{
-
-                    //    if (this.Status == SpatialAnchorStatus.Scanning && !enoughDataForSaving)
-                    //    {                     
-                    //        return;
-                    //    }
-                    //    if (enoughDataForSaving)
-                    //    {
-                    //        if (this.Status == SpatialAnchorStatus.Saving) return;
-                    //        if (this.anchorVisuals.TryGetValue(string.Empty, out AnchorModel model))
-                    //        {
-                    //            try
-                    //            {
-                    //                this.Status = SpatialAnchorStatus.Saving;
-                    //                var cloudAnchor = new CloudSpatialAnchor
-                    //                {
-                    //                    LocalAnchor = model.LocalAnchor.Anchor
-                    //                };
-                    //                model.CloudAnchor = cloudAnchor;
-                    //                var now = new Date();
-                    //                var calendar = Calendar.Instance;
-                    //                calendar.Time = now;
-                    //                calendar.Add(CalendarField.Date, 7);
-                    //                var oneWeekFromNow = calendar.Time;
-                    //                cloudAnchor.Expiration = oneWeekFromNow;
-                    //                Task.Run(async () =>
-                    //                {
-                    //                    try
-                    //                    {                                      
-                    //                        var result = await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor).GetAsync();
-                    //                        var anchorId = cloudAnchor.Identifier;
-                    //                        this.anchorVisuals[anchorId] = model;
-                    //                        this.anchorVisuals.TryRemove(string.Empty, out _);
-                    //                        SaveAnchor(this, new SpatialAnchors.Models.Anchor { AnchorId = cloudAnchor.Identifier });                                        
-                    //                        this.Status = SpatialAnchorStatus.Iddle;
-                    //                    }
-                    //                    catch (Exception ex)
-                    //                    {
-                    //                        ShowMessage(this, "ErrorSavingAnchor");
-                    //                    }
-                    //                });
-                    //            }
-                    //            catch
-                    //            {
-
-                    //            }
-                    //        }
-                    //    }
-                    //}
-                }
+            }                      
         }
 
 
@@ -178,43 +113,41 @@ namespace SpatialAnchors.iOS.Services
             var arFrame = frame as ARFrame;
             if (frame == null) return;
             if (this.spatialAnchorsSession == null) return;
+
             this.spatialAnchorsSession.ProcessFrame(arFrame);
 
-            if (this.Mode == SpatialAnchorsMode.AddAnchors 
-                && this.Status == SpatialAnchorStatus.Saving
-                && this.enoughDataForSaving)
+            if (this.enoughDataForSaving && this.Mode == SpatialAnchorsMode.AddAnchors)
             {
-                ///his.source.CreateCloudAnchor();
-
-                //this.currentlyPlacingAnchor = false;
-                //this.UpdateMainStatusTitle("Cloud Anchor being saved...");
-
-                //var cloudAnchor = new CloudSpatialAnchor
-                //{
-                //    LocalAnchor = this.localAnchor
-                //};
-
-                //// In this sample app we delete the cloud anchor explicitly, but you can also set it to expire automatically
-                //DateTime now = DateTime.Today;
-                //DateTimeOffset oneWeekFromNow = now.AddDays(7);
-//                this.cloudAnchor.Expiration = oneWeekFromNow;
-
-                Task.Run(async () =>
+                if (this.Status == SpatialAnchorStatus.Saving) return;
+                if (this.anchorVisuals.TryGetValue(string.Empty, out AnchorModel model))
                 {
-                    try
+                    this.cloudAnchor = new CloudSpatialAnchor
                     {
-                        //await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor);
-                        //var anchorId = cloudAnchor.Identifier;
-                        //this.anchorVisuals[anchorId] = model;
-                        //this.anchorVisuals.TryRemove(string.Empty, out _);
-                        //SaveAnchor(this, new Models.Anchor { AnchorId = cloudAnchor.Identifier });
-                        //this.Status = SpatialAnchorStatus.Iddle;
-                    }                                                     
-                    catch (Exception ex)
+                        LocalAnchor = this.localAnchor
+                    };
+
+                    // In this sample app we delete the cloud anchor explicitly, but you can also set it to expire automatically
+                    DateTime now = DateTime.Today;
+                    DateTimeOffset oneWeekFromNow = now.AddDays(7);
+                    this.cloudAnchor.Expiration = oneWeekFromNow;
+
+                    Task.Run(async () =>
                     {
-                        ShowMessage(this, "ErrorSavingAnchor");
-                    }
-                });
+                        try
+                        {
+                            await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor);
+                            var anchorId = cloudAnchor.Identifier;
+                            this.anchorVisuals[anchorId] = model;
+                            this.anchorVisuals.TryRemove(string.Empty, out _);
+                            SaveAnchor(this, new Models.Anchor { AnchorId = cloudAnchor.Identifier });
+                            this.Status = SpatialAnchorStatus.Iddle;
+                        }
+                        catch (Exception ex)
+                        {
+                            ShowMessage(this, "ErrorSavingAnchor");
+                        }
+                    });
+                }
             }
         }
 
@@ -231,6 +164,7 @@ namespace SpatialAnchors.iOS.Services
         /// </inheritdoc>  
         public void StartLocatingAnchors(string[] anchors)
         {
+            this.Mode = SpatialAnchorsMode.SearchAnchors;
             StopLocatingAnchors();
             var criteria = new AnchorLocateCriteria
             {
@@ -276,6 +210,33 @@ namespace SpatialAnchors.iOS.Services
             }
         }
 
+
+        /// <summary>
+        /// Places a model on a point
+        /// </summary>   
+        public void PlaceModel(object transform)
+        {      
+            if (this.Mode == SpatialAnchorsMode.AddAnchors &&
+                this.Status == SpatialAnchorStatus.Iddle)
+            {
+                var matrix = (NMatrix4)transform;
+                this.localAnchor = new ARAnchor(matrix);
+
+                var model = new AnchorModel
+                {
+                    CloudAnchor = null,
+                    LocalAnchor = this.localAnchor
+                };
+                this.anchorVisuals[string.Empty] = model;
+
+                var modelNode = LoadMOdel();
+                modelNode.Position = model.LocalAnchor.Transform.ToPosition();
+                this.sceneView.Scene.RootNode.AddChildNode(modelNode);
+                this.Status = SpatialAnchorStatus.Scanning;
+            }
+        }
+
+        
 
         /// <summary>
         /// Load the Andy Android Model
