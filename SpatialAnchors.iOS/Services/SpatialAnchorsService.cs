@@ -210,9 +210,12 @@ namespace SpatialAnchors.iOS.Services
                 this.anchorVisuals[anchor.Identifier] = model;
                 this.sceneView.Session.AddAnchor(anchor.LocalAnchor);
 
-                var modelNode = LoadMOdel();                
-                modelNode.Position = model.LocalAnchor.Transform.ToPosition();               
-                this.sceneView.Scene.RootNode.AddChildNode(modelNode);            
+                var modelNode = LoadModel();
+                if (modelNode != null)
+                {
+                    modelNode.Position = model.LocalAnchor.Transform.ToPosition();
+                    this.sceneView.Scene.RootNode.AddChildNode(modelNode);
+                }
             }
         }
 
@@ -235,7 +238,7 @@ namespace SpatialAnchors.iOS.Services
                 };
                 this.anchorVisuals[string.Empty] = model;
 
-                var modelNode = LoadMOdel();
+                var modelNode = LoadModel();
                 if (modelNode != null)
                 {
                     modelNode.Position = model.LocalAnchor.Transform.ToPosition();
@@ -250,19 +253,22 @@ namespace SpatialAnchors.iOS.Services
         /// <summary>
         /// Load the Andy Android Model
         /// </summary>        
-        private SCNNode LoadMOdel()
+        private SCNNode LoadModel()
         {
             try
             {
                 var modelName = "art.scnassets/andy.usdz";                    
                 var scene = SCNScene.FromFile(modelName);
-                var modelNode = scene.RootNode.ChildNodes[0];
-             modelNode.Scale = new SCNVector3(0.8f, 0.8f, 0.8f);
-                return modelNode;
+                if (scene != null)
+                {
+                    var modelNode = scene.RootNode.ChildNodes[0];
+                    modelNode.Scale = new SCNVector3(0.8f, 0.8f, 0.8f);
+                    return modelNode;
+                }
             }
             catch (Exception ex)
             {
-                ShowMessage(this, "Error loading model");
+                ShowMessage(this, "Error " + ex.Message);
             }
             return null;
         }
