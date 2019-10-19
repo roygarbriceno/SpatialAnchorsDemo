@@ -12,3 +12,4 @@
 /SpatialAnchors.Models/obj
 /SpatialAnchors.Core/bin/Release/netstandard2.0
 /SpatialAnchors.Droid/bin/Release
+/SpatialAnchors.iOS/bin/iPhone/Debug
