@@ -64,6 +64,7 @@ namespace SpatialAnchors.iOS.Services
 
             this.spatialAnchorsSession.Start();           
             this.Status  = SpatialAnchorStatus.Iddle;
+            this.enoughDataForSaving = false;
         }
 
 

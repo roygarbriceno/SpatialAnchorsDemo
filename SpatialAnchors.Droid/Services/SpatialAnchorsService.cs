@@ -78,7 +78,7 @@ namespace SpatialAnchors.Droid.Services
 
             this.spatialAnchorsSession.Start();           
             this.Status  = SpatialAnchorStatus.Iddle;
-            this.arFragment.TapArPlane += OnTapArPlane;
+            this.arFragment.TapArPlane += OnTapArPlane;                        
         }
 
 
