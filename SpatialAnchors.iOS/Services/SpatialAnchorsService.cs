@@ -236,9 +236,12 @@ namespace SpatialAnchors.iOS.Services
                 this.anchorVisuals[string.Empty] = model;
 
                 var modelNode = LoadMOdel();
-                modelNode.Position = model.LocalAnchor.Transform.ToPosition();
-                this.sceneView.Scene.RootNode.AddChildNode(modelNode);
-                this.Status = SpatialAnchorStatus.Scanning;
+                if (modelNode != null)
+                {
+                    modelNode.Position = model.LocalAnchor.Transform.ToPosition();
+                    this.sceneView.Scene.RootNode.AddChildNode(modelNode);
+                    this.Status = SpatialAnchorStatus.Scanning;
+                }
             }
         }
 
