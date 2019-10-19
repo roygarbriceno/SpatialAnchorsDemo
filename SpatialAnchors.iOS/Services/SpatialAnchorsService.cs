@@ -292,7 +292,7 @@ namespace SpatialAnchors.iOS.Services
             }
             catch (Exception ex)
             {
-                ShowMessage(this, ex.Message);
+                ShowMessage(this, "Error loading model");
             }
             return null;
         }

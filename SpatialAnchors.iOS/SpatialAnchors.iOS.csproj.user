@@ -20,5 +20,7 @@
 &lt;/dict&gt;
 &lt;/plist&gt;
 </TargetiOSDevice>
+    <DeveloperId>desarrollo%40arkanosoft.com</DeveloperId>
+    <DevelopmentTeamId>J25587784H</DevelopmentTeamId>
   </PropertyGroup>
 </Project>
