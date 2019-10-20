@@ -265,6 +265,10 @@ namespace SpatialAnchors.iOS.Services
                     modelNode.Scale = new SCNVector3(0.8f, 0.8f, 0.8f);
                     return modelNode;
                 }
+                else
+                {
+                    throw new Exception("asset model not found");
+                }
             }
             catch (Exception ex)
             {
