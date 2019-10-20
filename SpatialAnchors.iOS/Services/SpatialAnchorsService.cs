@@ -257,7 +257,7 @@ namespace SpatialAnchors.iOS.Services
         {
             try
             {
-                var modelName = "art.scnassets/andy.usdz";                    
+                var modelName = "art.scnassets/Andy.usdz";                    
                 var scene = SCNScene.FromFile(modelName);
                 if (scene != null)
                 {
