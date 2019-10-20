@@ -28,18 +28,9 @@
         /// </summary>
         protected override Config GetSessionConfiguration(Session session)
         {
-            //PlaneDiscoveryController.Hide();
-            //PlaneDiscoveryController.SetInstructionView(null);
-            // ArSceneView.PlaneRenderer.Enabled = false;
-
             var config = new Config(session);
             config.SetUpdateMode(Config.UpdateMode.LatestCameraImage);
-            config.SetFocusMode(Config.FocusMode.Auto);
-
-            //LoadImages(config, session);
-            //config.AugmentedImageDatabase = this.imageDatabase;
-
-            //session.Configure(config);
+            config.SetFocusMode(Config.FocusMode.Auto);                     
             ArSceneView.SetupSession(session);
 
             return config;

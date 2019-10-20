@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ARKit;
+﻿using ARKit;
 using Foundation;
 using SceneKit;
 using SpatialAnchors.Core.ViewModels;
-using UIKit;
+
 
 namespace SpatialAnchors.iOS.Delegates
 {
+    /// <summary>
+    /// ARKit session delegate
+    /// </summary>
     public class ArSessionDelegate : ARSCNViewDelegate
     {
         private readonly ARSCNView sceneView;
@@ -35,7 +34,6 @@ namespace SpatialAnchors.iOS.Delegates
         public override void InterruptionEnded(ARSession session)
         {
             base.InterruptionEnded(session);
-            //this.viewModel.cloudSession.Reset();
         }
 
 
@@ -55,18 +53,16 @@ namespace SpatialAnchors.iOS.Delegates
             }
         }
 
+
+        /// <summary>
+        ///  Note: Always a super-tricky thing in ARKit : must get rid of the managed reference to the Frame object ASAP.
+        /// </summary>
         public override void WillRenderScene(ISCNSceneRenderer renderer, SCNScene scene, double timeInSeconds)
         {
-            // Note: Always a super-tricky thing in ARKit : must get rid of the managed reference to the Frame object ASAP.
             using (var frame = this.sceneView.Session?.CurrentFrame)
             {
                 if (frame == null) return;
-                this.viewModel.ProcessFrame(frame);                
-                /*
-                if (this.source.currentlyPlacingAnchor && this.source.enoughDataForSaving && this.source.localAnchor != null)
-                {
-                    this.source.CreateCloudAnchor();
-                }*/
+                this.viewModel.ProcessFrame(frame);                            
             }
         }
     }
