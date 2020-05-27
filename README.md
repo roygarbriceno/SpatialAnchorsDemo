@@ -1,4 +1,4 @@
-# Spatial Anchor sDemo
+# Spatial Anchors Demo
 
 This's a simple Augmented Reality Demo using Xamarin Forms, MvvmCross and Azure Spatial Anchors. It expand my other sample (https://github.com/roygarbriceno/ARDemo) by allowing the anchors to be persistent over time using the recent service on Azure.  
 
