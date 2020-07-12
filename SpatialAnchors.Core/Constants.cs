@@ -8,12 +8,12 @@
         /// <summary>
         /// Set this value to the spatial anchors account id shown on the azure portal
         /// </summary>
-        public const string SpatialAnchorsAccountId = "fe723cf9-aaed-455f-bd36-322a14657249";
+        public const string SpatialAnchorsAccountId = "8b9453bf-3aa2-46cb-9284-5faef033cfa2";
 
         /// <summary>
         /// Set this value to the spatial anchors key shown on the azure portal
         /// </summary>
-        public const string SpatialAnchorsAccountKey = "o5dc40N0mFQ1YDFqhddcTf3WijFf9X4vylVmo+Nu5E0=";
+        public const string SpatialAnchorsAccountKey = "RBVocjn8l7dy6GymqpDNRg2N7L5lvv9a1rF4R4ewmXA=";
 
         /// <summary>
         /// Set this value to the URI where the API is published
@@ -30,5 +30,8 @@
         public const string SaveAnchorsUri = ServiceUri + "Anchors";
 
         public const string GetAnchorsUri = ServiceUri + "Anchors";
+
+
+        public const string GetModelsUri = ServiceUri + "Models";
     }
 }

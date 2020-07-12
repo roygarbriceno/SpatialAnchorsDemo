@@ -22,6 +22,7 @@ namespace SpatialAnchors.Droid.Services
     /// </summary>
     public class SpatialAnchorsService : ISpatialAnchorsService
     {
+        private string token = string.Empty;
         private ArFragment arFragment;
         private ModelRenderable modelRenderable;                
         private Context context;
@@ -68,6 +69,7 @@ namespace SpatialAnchors.Droid.Services
             this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;
             this.spatialAnchorsSession.TokenRequired += SpatialAnchorsSession_TokenRequired;
             this.spatialAnchorsSession.Error += (sender, e) =>
+            
             {
                 SessionErrorEvent eventArgs = e?.Args;
                 if (eventArgs == null) return;
@@ -127,7 +129,7 @@ namespace SpatialAnchors.Droid.Services
                                 Task.Run(async () =>
                                 {
                                     try
-                                    {                                      
+                                    {                                        
                                         var result = await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor).GetAsync();
                                         var anchorId = cloudAnchor.Identifier;
                                         this.anchorVisuals[anchorId] = model;

@@ -94,6 +94,7 @@
             return await GetAsync<List<SpatialAnchors.Models.Anchor>>(Constants.GetAnchorsUri);            
         }
 
+     
     }
 }
 
