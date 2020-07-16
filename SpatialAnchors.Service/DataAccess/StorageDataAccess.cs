@@ -174,5 +174,18 @@
             await table.ExecuteAsync(deleteOperation);
             return true;
         }
+
+
+        public async Task<Stream> GetModelFileAsync(string platform, string file)
+        {
+            var storageAccount = CloudStorageAccount.Parse(this.connectionString);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference("models");
+            await container.CreateIfNotExistsAsync();
+            var folder = container.GetDirectoryReference(platform);
+            var blockBlob = folder.GetBlockBlobReference(file);
+            var stream = await blockBlob.OpenReadAsync();
+            return stream;
+        }
     }
 }

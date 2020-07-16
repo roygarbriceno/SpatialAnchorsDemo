@@ -21,7 +21,8 @@
         /// </summary>
         /// <returns></returns>
         Task<List<Models.Anchor>> GetAnchorsAsync();
-        
 
+        /// <inheritdoc/>        
+        Task<byte[]> GetModel(string plataform);
     }
 }

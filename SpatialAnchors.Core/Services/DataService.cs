@@ -94,6 +94,20 @@
             return await GetAsync<List<SpatialAnchors.Models.Anchor>>(Constants.GetAnchorsUri);            
         }
 
+
+        /// <inheritdoc/>        
+        public async Task<byte[]> GetModel(string plataform)
+        {
+            var uri = $"{Constants.GetModelsUri}/{plataform}/andy";
+            CreateHttpClient();                        
+            var result = await httpClient.GetAsync(uri);
+            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var response = await result.Content.ReadAsStreamAsync();                
+            }
+            return null;
+        }
+
     }
 }
 

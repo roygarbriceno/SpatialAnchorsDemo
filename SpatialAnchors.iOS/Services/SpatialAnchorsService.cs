@@ -257,6 +257,9 @@ namespace SpatialAnchors.iOS.Services
         {
             try
             {
+                /// TODO: SCNScene.FromUrl has to be a downlaoded file
+                /// so first need to download the model from {Constants.ModelsUri}/models/ios/andy.uzsdz")
+                /// adn the use SCNScene.FromUrl( )
                 var modelName = "art.scnassets/Andy.usdz";                    
                 var scene = SCNScene.FromFile(modelName);
                 if (scene != null)

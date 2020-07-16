@@ -15942,46 +15942,43 @@ namespace SpatialAnchors.Droid
 		{
 			
 			// aapt resource value: 0x7F0D0000
-			public const int andy = 2131558400;
+			public const int keep_arcore = 2131558400;
 			
 			// aapt resource value: 0x7F0D0001
-			public const int keep_arcore = 2131558401;
+			public const int sceneform_camera_material = 2131558401;
 			
 			// aapt resource value: 0x7F0D0002
-			public const int sceneform_camera_material = 2131558402;
+			public const int sceneform_default_light_probe = 2131558402;
 			
 			// aapt resource value: 0x7F0D0003
-			public const int sceneform_default_light_probe = 2131558403;
+			public const int sceneform_face_mesh = 2131558403;
 			
 			// aapt resource value: 0x7F0D0004
-			public const int sceneform_face_mesh = 2131558404;
+			public const int sceneform_face_mesh_occluder = 2131558404;
 			
 			// aapt resource value: 0x7F0D0005
-			public const int sceneform_face_mesh_occluder = 2131558405;
+			public const int sceneform_footprint = 2131558405;
 			
 			// aapt resource value: 0x7F0D0006
-			public const int sceneform_footprint = 2131558406;
+			public const int sceneform_opaque_colored_material = 2131558406;
 			
 			// aapt resource value: 0x7F0D0007
-			public const int sceneform_opaque_colored_material = 2131558407;
+			public const int sceneform_opaque_textured_material = 2131558407;
 			
 			// aapt resource value: 0x7F0D0008
-			public const int sceneform_opaque_textured_material = 2131558408;
+			public const int sceneform_plane_material = 2131558408;
 			
 			// aapt resource value: 0x7F0D0009
-			public const int sceneform_plane_material = 2131558409;
+			public const int sceneform_plane_shadow_material = 2131558409;
 			
 			// aapt resource value: 0x7F0D000A
-			public const int sceneform_plane_shadow_material = 2131558410;
+			public const int sceneform_transparent_colored_material = 2131558410;
 			
 			// aapt resource value: 0x7F0D000B
-			public const int sceneform_transparent_colored_material = 2131558411;
+			public const int sceneform_transparent_textured_material = 2131558411;
 			
 			// aapt resource value: 0x7F0D000C
-			public const int sceneform_transparent_textured_material = 2131558412;
-			
-			// aapt resource value: 0x7F0D000D
-			public const int sceneform_view_renderable = 2131558413;
+			public const int sceneform_view_renderable = 2131558412;
 			
 			static Raw()
 			{
