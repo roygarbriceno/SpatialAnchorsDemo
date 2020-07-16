@@ -20,6 +20,8 @@
         /// </summary>
         public const string ServiceUri = "https://spatialanchorsdemo.azurewebsites.net/api/v1/";
 
+        public const string ModelsUri = "https://spatialanchorsdemo.blob.core.windows.net/models";
+
         /// <summary>
         /// Set this value to key used by the API (shown on the azure portal)
         /// </summary>

@@ -3,11 +3,9 @@
     android:layout_width="match_parent"    
     android:layout_height="match_parent">
 
-
     <fragment android:name="SpatialAnchors.Droid.Fragments.AnchorsFragment"
       android:id="@+id/anchors_fragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent" />
     
-
 </FrameLayout>

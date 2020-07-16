@@ -61,12 +61,13 @@ namespace SpatialAnchors.Droid.Services
             }
 
             this.spatialAnchorsSession = new CloudSpatialAnchorSession();
+            this.spatialAnchorsSession.Configuration.AccountDomain = "mixedreality.azure.com";
             this.spatialAnchorsSession.Configuration.AccountKey = Constants.SpatialAnchorsAccountKey;
             this.spatialAnchorsSession.Configuration.AccountId = Constants.SpatialAnchorsAccountId;
             this.spatialAnchorsSession.Session = this.arFragment.ArSceneView.Session;
             this.spatialAnchorsSession.AnchorLocated += this.OnAnchorLocated;
             this.spatialAnchorsSession.LocateAnchorsCompleted += this.OnLocateAnchorsCompleted;
-            this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;
+            this.spatialAnchorsSession.SessionUpdated += this.SessionUpdated;            
             this.spatialAnchorsSession.TokenRequired += SpatialAnchorsSession_TokenRequired;
             this.spatialAnchorsSession.Error += (sender, e) =>
             
@@ -76,7 +77,12 @@ namespace SpatialAnchors.Droid.Services
                 var message = $"{eventArgs.ErrorCode}: {eventArgs.ErrorMessage}";
                 ShowMessage(this, message);
             };
-            
+
+            ////if (string.IsNullOrEmpty(this.spatialAnchorsSession.Configuration.AccessToken))
+            ////{
+            ////    var token = this.spatialAnchorsSession.GetAccessTokenWithAccountKeyAsync(Constants.SpatialAnchorsAccountKey).GetAsync().Result;
+            ////    this.spatialAnchorsSession.Configuration.AccessToken = token.ToString();
+            ////}
 
             this.spatialAnchorsSession.Start();           
             this.Status  = SpatialAnchorStatus.Iddle;
@@ -128,8 +134,8 @@ namespace SpatialAnchors.Droid.Services
                                 cloudAnchor.Expiration = oneWeekFromNow;
                                 Task.Run(async () =>
                                 {
-                                    try
-                                    {                                        
+                                try
+                                {                                       
                                         var result = await this.spatialAnchorsSession.CreateAnchorAsync(cloudAnchor).GetAsync();
                                         var anchorId = cloudAnchor.Identifier;
                                         this.anchorVisuals[anchorId] = model;
@@ -281,11 +287,12 @@ namespace SpatialAnchors.Droid.Services
         /// Loads the 3D models to use        
         /// </summary>
         public void LoadModels()
-        {
-            ModelRenderable.InvokeBuilder().SetSource(this.context, Resource.Raw.andy).Build(renderable =>
+        {           
+            ModelRenderable.InvokeBuilder().SetSource(this.context, 
+                Android.Net.Uri.Parse($"{Constants.ModelsUri}/android/andy.sfb")).Build(renderable =>
             {
                 modelRenderable = renderable;
-            });
+            });          
         }
     }
 }

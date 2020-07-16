@@ -48,7 +48,8 @@ namespace SpatialAnchors.Droid.Renderers
                 this.view = activity.LayoutInflater.Inflate(Resource.Layout.AnchorsLayout, this, false);
                 AddView(this.view);
                 
-                this.arFragment = activity.GetFragmentManager().FindFragmentById(Resource.Id.anchors_fragment) as AnchorsFragment;
+                this.arFragment = activity.GetFragmentManager()
+                    .FindFragmentById(Resource.Id.anchors_fragment) as AnchorsFragment;
                 if (this.arFragment != null)
                 {                    
                     this.arFragment.ArSceneView.Scene.Update += (_, args) =>
@@ -70,7 +71,7 @@ namespace SpatialAnchors.Droid.Renderers
     
 
         /// <summary>
-        /// Fix the layout measures to fill the whole view
+        /// Set the layout measures to fill the whole view
         /// </summary>        
         protected override void OnLayout(bool changed, int l, int t, int r, int b)
         {
@@ -83,7 +84,7 @@ namespace SpatialAnchors.Droid.Renderers
 
 
         /// <summary>
-        /// Remoev the AR fragment when the pages closes otherwise will throw an error when returning
+        /// Remove the AR fragment when the pages closes otherwise will throw an error when returning
         /// </summary>
         protected override void OnDetachedFromWindow()
         {            
