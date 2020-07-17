@@ -287,9 +287,10 @@ namespace SpatialAnchors.Droid.Services
         /// Loads the 3D models to use        
         /// </summary>
         public void LoadModels()
-        {           
+        {
+            var uri = $"{Constants.ModelsUri}/android/andy.sfb";
             ModelRenderable.InvokeBuilder().SetSource(this.context, 
-                Android.Net.Uri.Parse($"{Constants.ModelsUri}/android/andy.sfb")).Build(renderable =>
+                Android.Net.Uri.Parse(uri)).Build(renderable =>
             {
                 modelRenderable = renderable;
             });          
