@@ -67,7 +67,6 @@ namespace SpatialAnchors.iOS.Renderers
             base.ViewWillAppear(animated);
             try
             {
-                base.ViewWillAppear(animated);                
                 this.sceneView.Session.Run(new ARWorldTrackingConfiguration
                 {
                     AutoFocusEnabled = true,
